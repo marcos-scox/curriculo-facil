@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Currículo Fácil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --ink:#1c1c1c;
+  --paper:#f6f5f1;
+  --panel:#ffffff;
+  --line:#e2e0d8;
+  --muted:#7a7770;
+  --brand:#2b2b2b;
+
+  /* estética do sistema (referência Velorah/Hirael): navy cinematográfico + vidro + dourado */
+  --sys-bg:#0a0d17;
+  --sys-bg-elev:#11162a;
+  --sys-stage:#060811;
+  --sys-glass:rgba(255,255,255,.055);
+  --sys-glass-strong:rgba(255,255,255,.09);
+  --sys-border:rgba(255,255,255,.11);
+  --sys-hi:#f4f1e8;
+  --sys-mid:#a8aec2;
+  --sys-low:#767c92;
+  --sys-gold:#cba668;
+  --sys-gold-ink:#241c0d;
+  --serif:'Instrument Serif',serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--sys-bg);
+  color:var(--sys-mid);
+  min-height:100vh;
+}
+button{font-family:inherit;cursor:pointer;}
+input,textarea{font-family:inherit;}
+
+/* ---------- topo ---------- */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 32px;border-bottom:1px solid var(--sys-border);
+  background:rgba(10,13,23,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  position:sticky;top:0;z-index:50;
+}
+.brand{display:flex;align-items:baseline;gap:10px;}
+.brand .mark{font-family:var(--serif);font-style:italic;font-weight:400;font-size:25px;letter-spacing:.2px;color:var(--sys-hi);}
+.brand .tag{font-size:12px;color:var(--sys-low);}
+.steps{display:flex;gap:6px;font-size:13px;color:var(--sys-low);}
+.steps span{padding:6px 14px;border-radius:20px;}
+.steps span.active{background:var(--sys-gold);color:var(--sys-gold-ink);font-weight:600;}
+.topbar-actions{display:flex;gap:10px;}
+.btn{
+  border:1px solid var(--sys-border);background:transparent;color:var(--sys-hi);
+  padding:9px 18px;border-radius:999px;font-size:13.5px;font-weight:600;
+  transition:transform .12s ease, border-color .12s ease;
+}
+.btn:hover{transform:translateY(-1px);border-color:var(--sys-gold);}
+.btn.primary{background:var(--sys-gold);color:var(--sys-gold-ink);border-color:var(--sys-gold);}
+.btn.ghost{border-color:transparent;color:var(--sys-low);}
+.btn:active{transform:translateY(0);}
+
+/* ---------- views ---------- */
+.view{display:none;}
+.view.active{display:block;}
+
+/* ---------- galeria ---------- */
+.gallery-wrap{max-width:1180px;margin:0 auto;padding:56px 32px 80px;}
+.gallery-head{margin-bottom:38px;}
+.gallery-head h1{
+  font-family:var(--serif);font-style:italic;font-size:46px;font-weight:400;
+  letter-spacing:.2px;margin:0 0 12px;color:var(--sys-hi);
+}
+.gallery-head p{color:var(--sys-low);font-size:15.5px;max-width:520px;margin:0;line-height:1.55;}
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:20px;
+}
+.card{
+  background:var(--sys-glass);border:1px solid var(--sys-border);border-radius:14px;
+  overflow:hidden;cursor:pointer;transition:box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+  display:flex;flex-direction:column;backdrop-filter:blur(6px);
+}
+.card:hover{box-shadow:0 14px 34px rgba(0,0,0,.35);transform:translateY(-3px);border-color:var(--sys-gold);}
+.thumb{height:150px;position:relative;overflow:hidden;}
+.card-name{padding:14px 16px 16px;}
+.card-name b{display:block;font-size:14px;margin-bottom:3px;color:var(--sys-hi);font-weight:600;}
+.card-name span{font-size:12px;color:var(--sys-low);}
+.card.blank{border-style:dashed;align-items:center;justify-content:center;min-height:216px;}
+.card.blank .thumb{display:flex;align-items:center;justify-content:center;background:transparent;height:150px;width:100%;}
+.card.blank .plus{font-size:34px;color:var(--sys-gold);font-weight:300;}
+
+/* thumb mini-visuals */
+.thumb-block{position:absolute;background:var(--tc);}
+.thumb-line{position:absolute;background:#d8d5cb;}
+
+/* ---------- editor ---------- */
+.editor{display:grid;grid-template-columns:380px 1fr;min-height:calc(100vh - 65px);}
+.panel{
+  border-right:1px solid var(--sys-border);background:var(--sys-bg-elev);
+  overflow-y:auto;max-height:calc(100vh - 65px);
+}
+.panel-section{border-bottom:1px solid var(--sys-border);padding:18px 22px;}
+.panel-section h3{
+  font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--sys-low);
+  margin:0 0 14px;font-weight:700;
+}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:12.5px;color:var(--sys-mid);margin-bottom:5px;font-weight:500;}
+.field input,.field textarea{
+  width:100%;padding:9px 10px;border:1px solid var(--sys-border);border-radius:8px;
+  font-size:13.5px;background:rgba(255,255,255,.045);color:var(--sys-hi);
+}
+.field textarea{resize:vertical;min-height:60px;line-height:1.4;}
+.field input:focus,.field textarea:focus{outline:2px solid var(--sys-gold);outline-offset:1px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+.entry-block{border:1px solid var(--sys-border);border-radius:10px;padding:12px;margin-bottom:10px;position:relative;background:rgba(255,255,255,.03);}
+.entry-block .remove{
+  position:absolute;top:8px;right:8px;border:none;background:none;color:var(--sys-low);
+  font-size:16px;line-height:1;padding:2px 6px;border-radius:4px;
+}
+.entry-block .remove:hover{background:rgba(255,255,255,.08);color:#e08a8a;}
+.add-btn{
+  width:100%;padding:9px;border:1px dashed var(--sys-border);border-radius:8px;background:none;
+  color:var(--sys-low);font-size:13px;font-weight:600;
+}
+.add-btn:hover{border-color:var(--sys-gold);color:var(--sys-gold);}
+
+.swatches{display:flex;gap:8px;flex-wrap:wrap;}
+.swatch{
+  width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;
+  box-shadow:0 0 0 1px rgba(255,255,255,.14) inset;
+}
+.swatch.active{border-color:var(--sys-gold);}
+.toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;color:var(--sys-mid);}
+.toggle-row input{width:auto;}
+.photo-upload{display:flex;align-items:center;gap:10px;}
+.photo-preview{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);object-fit:cover;border:1px solid var(--sys-border);}
+.photo-upload label.btn{padding:7px 12px;font-size:12.5px;}
+.small-note{font-size:11.5px;color:var(--sys-low);margin-top:4px;}
+
+/* ---------- preview ---------- */
+.preview-area{
+  overflow-y:auto;max-height:calc(100vh - 65px);
+  display:flex;justify-content:center;padding:40px 20px 80px;background:var(--sys-stage);
+}
+.page-shell-wrap{
+  width:794px;height:1123px;flex-shrink:0;position:relative;
+}
+.page-shell{
+  width:794px;height:1123px;background:#fff;box-shadow:0 30px 70px rgba(0,0,0,.55);
+  position:absolute;top:0;left:0;transform-origin:top left;
+  overflow:auto;
+}
+#resume{width:100%;min-height:1123px;position:relative;transform-origin:top center;}
+
+/* ---------- alternador Editar / Visualizar (mobile) ---------- */
+.mobile-tabs{display:none;}
+.mtab{
+  flex:1;border:none;background:none;padding:13px 0;font-size:13.5px;font-weight:700;
+  color:var(--sys-low);border-bottom:2px solid transparent;
+}
+.mtab.active{color:var(--sys-gold);border-bottom-color:var(--sys-gold);}
+
+/* toolbar float */
+.editor-toolbar{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:rgba(17,22,42,.85);backdrop-filter:blur(14px);color:var(--sys-hi);display:flex;gap:10px;padding:10px 14px;
+  border-radius:999px;border:1px solid var(--sys-border);box-shadow:0 14px 34px rgba(0,0,0,.45);z-index:60;
+  max-width:94vw;overflow-x:auto;
+}
+.editor-toolbar button{
+  border:none;background:transparent;color:var(--sys-hi);padding:9px 14px;border-radius:999px;
+  font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;
+}
+.editor-toolbar button:hover{background:rgba(255,255,255,.12);}
+.editor-toolbar .divider{width:1px;background:rgba(255,255,255,.2);margin:4px 2px;}
+
+/* ================= ESTILOS DOS MODELOS DE CURRÍCULO ================= */
+#resume{color:var(--text-body,#333);}
+#resume h1,#resume h2,#resume h3{margin:0;}
+#resume .r-name{font-size:30px;line-height:1.1;color:var(--text-strong,#1c1c1c);}
+#resume .r-role{font-size:15px;margin-top:4px;color:var(--acc);font-weight:600;}
+#resume .r-contact{font-size:11.5px;color:var(--text-body,#555);}
+#resume .r-sectitle{
+  font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;
+  color:var(--acc);margin-bottom:10px;
+}
+#resume .r-summary{font-size:12.8px;line-height:1.6;color:var(--text-body,#333);}
+#resume .r-exp-item,#resume .r-edu-item{margin-bottom:13px;}
+#resume .r-exp-top{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--text-strong,#1c1c1c);}
+#resume .r-exp-sub{font-size:12px;color:var(--text-body,#555);margin-top:1px;}
+#resume .r-exp-desc{font-size:12px;color:var(--text-body,#3a3a3a);line-height:1.55;margin-top:4px;}
+#resume .r-skill-tag{
+  display:inline-block;font-size:11px;padding:4px 10px;border-radius:20px;
+  background:var(--acc-10);color:var(--acc-dark);margin:0 6px 6px 0;font-weight:600;
+}
+#resume .r-lang-item{font-size:12px;margin-bottom:5px;color:var(--text-body,#333);}
+
+/* -- estrutura: header-center (Executivo Clássico) -- */
+.s-executivo{padding:56px 60px;font-family:'Fraunces',serif;}
+.s-executivo .r-name{font-weight:700;text-align:center;}
+.s-executivo .r-role{text-align:center;}
+.s-executivo .head{border-bottom:2px solid var(--acc);padding-bottom:18px;margin-bottom:24px;}
+.s-executivo .r-contact{text-align:center;margin-top:8px;font-family:'Inter',sans-serif;}
+.s-executivo .r-sectitle{font-family:'Inter',sans-serif;}
+.s-executivo section{margin-bottom:22px;}
+
+/* -- sidebar-left (Sidebar Moderno) -- */
+.s-sidebar{display:flex;font-family:'Inter',sans-serif;min-height:1123px;}
+.s-sidebar .side{width:255px;background:var(--acc);color:#fff;padding:40px 26px;}
+.s-sidebar .side .r-name{font-size:22px;font-weight:800;}
+.s-sidebar .side .r-role{color:#fff;opacity:.85;font-size:13px;}
+.s-sidebar .side .r-contact{color:#fff;opacity:.85;margin-top:16px;line-height:1.9;}
+.s-sidebar .side .photo{width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:18px;border:3px solid rgba(255,255,255,.4);}
+.s-sidebar .side .r-sectitle{color:#fff;opacity:.9;margin-top:26px;}
+.s-sidebar .side .r-skill-tag{background:rgba(255,255,255,.16);color:#fff;}
+.s-sidebar .side .r-lang-item{color:#fff;opacity:.9;}
+.s-sidebar .main{flex:1;padding:40px 34px;}
+.s-sidebar .main section{margin-bottom:22px;}
+
+/* -- header-left-minimal (Minimalista) -- */
+.s-minimal{padding:58px 64px;font-family:'Inter',sans-serif;}
+.s-minimal .r-name{font-weight:600;letter-spacing:-.5px;}
+.s-minimal .head{margin-bottom:34px;}
+.s-minimal .r-contact{margin-top:10px;display:flex;gap:14px;}
+.s-minimal .r-sectitle{font-weight:600;border-bottom:1px solid #e5e3dc;padding-bottom:8px;}
+.s-minimal section{margin-bottom:26px;}
+
+/* -- header-block (Criativo Colorido) -- */
+.s-criativo{font-family:'Inter',sans-serif;}
+.s-criativo .head{background:var(--acc);color:#fff;padding:44px 56px;}
+.s-criativo .r-role{color:#fff;opacity:.9;}
+.s-criativo .r-contact{color:#fff;opacity:.85;margin-top:10px;}
+.s-criativo .body{padding:34px 56px;}
+.s-criativo section{margin-bottom:24px;}
+.s-criativo .r-sectitle::before{content:"";display:inline-block;width:8px;height:8px;background:var(--acc);border-radius:2px;margin-right:8px;}
+
+/* -- header-bar (Corporativo) -- */
+.s-corporativo{font-family:'Inter',sans-serif;border-left:8px solid var(--acc);min-height:1123px;}
+.s-corporativo .head{padding:40px 48px 28px;}
+.s-corporativo .body{padding:0 48px 40px;}
+.s-corporativo .r-sectitle{background:#f2f1ec;padding:7px 12px;border-radius:4px;}
+.s-corporativo section{margin-bottom:22px;}
+.s-corporativo .r-contact{margin-top:8px;}
+
+/* -- header-center-serif (Elegante) -- */
+.s-elegante{padding:60px 66px;font-family:'Playfair Display',serif;}
+.s-elegante .r-name{text-align:center;font-weight:700;letter-spacing:.5px;}
+.s-elegante .r-role{text-align:center;font-family:'Inter',sans-serif;letter-spacing:.12em;text-transform:uppercase;font-size:11px;}
+.s-elegante .head{text-align:center;margin-bottom:8px;}
+.s-elegante .r-contact{text-align:center;font-family:'Inter',sans-serif;margin-top:14px;}
+.s-elegante .divider{width:60px;height:2px;background:var(--acc);margin:20px auto;}
+.s-elegante .r-sectitle{font-family:'Inter',sans-serif;text-align:center;letter-spacing:.15em;}
+.s-elegante section{margin-bottom:26px;text-align:left;}
+
+/* -- header-mono (Tech / Dev) -- */
+.s-tech{font-family:'Inter',sans-serif;padding:0;}
+.s-tech .head{background:#161b22;color:#c9d1d9;padding:38px 48px;font-family:'JetBrains Mono',monospace;}
+.s-tech .head .r-name{color:#fff;font-family:'JetBrains Mono',monospace;}
+.s-tech .head .r-role{color:var(--acc-light);}
+.s-tech .head .r-contact{color:#8b949e;margin-top:10px;}
+.s-tech .body{padding:32px 48px;}
+.s-tech .r-sectitle{font-family:'JetBrains Mono',monospace;}
+.s-tech .r-sectitle::before{content:"// ";color:var(--acc);}
+.s-tech .r-skill-tag{font-family:'JetBrains Mono',monospace;border-radius:4px;}
+.s-tech section{margin-bottom:22px;}
+
+/* -- two-col (Compacto) -- */
+.s-compacto{font-family:'Inter',sans-serif;padding:48px 54px;}
+.s-compacto .head{border-bottom:1px solid #e5e3dc;padding-bottom:20px;margin-bottom:24px;}
+.s-compacto .cols{display:grid;grid-template-columns:1.4fr 1fr;gap:34px;}
+.s-compacto section{margin-bottom:20px;}
+
+/* -- timeline (Timeline Vertical) -- */
+.s-timeline{font-family:'Inter',sans-serif;padding:52px 56px;}
+.s-timeline .head{margin-bottom:26px;}
+.s-timeline .r-name{font-weight:800;}
+.s-timeline .tl{position:relative;padding-left:22px;}
+.s-timeline .tl::before{content:"";position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:var(--acc-10);}
+.s-timeline .tl .r-exp-item,.s-timeline .tl .r-edu-item{position:relative;padding-left:14px;}
+.s-timeline .tl .r-exp-item::before,.s-timeline .tl .r-edu-item::before{
+  content:"";position:absolute;left:-22px;top:4px;width:11px;height:11px;border-radius:50%;
+  background:var(--acc);border:2px solid #fff;box-shadow:0 0 0 2px var(--acc);
+}
+.s-timeline section{margin-bottom:24px;}
+
+/* -- card-photo (Cartão de Perfil) -- */
+.s-cartao{font-family:'Inter',sans-serif;padding:50px 58px;}
+.s-cartao .head{display:flex;align-items:center;gap:22px;background:var(--acc-10);padding:28px 32px;border-radius:14px;margin-bottom:28px;}
+.s-cartao .photo{width:88px;height:88px;border-radius:16px;object-fit:cover;background:#ddd;flex-shrink:0;}
+.s-cartao .r-name{font-weight:700;}
+.s-cartao .r-contact{margin-top:6px;}
+.s-cartao section{margin-bottom:22px;}
+.s-cartao .r-sectitle{display:flex;align-items:center;gap:8px;}
+.s-cartao .r-sectitle::after{content:"";flex:1;height:1px;background:#eceae3;}
+
+.empty-hint{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#b9b6ac;font-size:13px;text-align:center;padding:40px;
+}
+
+/* -- foto pequena em cabeçalhos alinhados à esquerda -- */
+.head-row{display:flex;align-items:center;gap:22px;}
+.head-row .head-text{flex:1;min-width:0;}
+.small-photo{width:80px;height:80px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#ddd;}
+.s-tech .small-photo{border-radius:10px;border:2px solid var(--acc);}
+.s-criativo .small-photo{border:3px solid rgba(255,255,255,.55);}
+.s-corporativo .small-photo{border:2px solid var(--acc);}
+.exec-photo,.eleg-photo{width:104px;height:104px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 18px;border:3px solid var(--acc);background:#ddd;}
+
+/* -- proteção de contraste: estas áreas têm fundo próprio (colorido/escuro) e não
+      devem mudar com a cor de texto customizada, senão o texto some -- */
+#resume .s-sidebar .side, #resume .s-sidebar .side *{color:#fff!important;}
+#resume .s-criativo .head, #resume .s-criativo .head *{color:#fff!important;}
+#resume .s-tech .head, #resume .s-tech .head *{color:#c9d1d9!important;}
+#resume .s-tech .head .r-name{color:#fff!important;}
+#resume .s-tech .head .r-role{color:var(--acc-light)!important;}
+
+@media print{
+  @page{ size:A4; margin:0; }
+  body *{visibility:hidden;}
+  #resume,#resume *{visibility:visible;}
+  #resume{position:absolute;left:0;top:0;width:794px;height:1123px;overflow:hidden;box-shadow:none;}
+  .page-shell{box-shadow:none;}
+}
+
+@media (max-width:880px){
+  .topbar{padding:14px 16px;}
+  .brand .tag{display:none;}
+  .steps span{padding:5px 9px;font-size:12px;}
+  .btn{padding:8px 12px;font-size:12.5px;}
+
+  .gallery-wrap{padding:28px 16px 70px;}
+  .gallery-head h1{font-size:28px;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;}
+  .thumb{height:110px;}
+
+  .mobile-tabs{
+    display:flex;position:sticky;top:57px;z-index:40;
+    background:var(--sys-bg-elev);border-bottom:1px solid var(--sys-border);
+  }
+
+  .editor{grid-template-columns:1fr;}
+  .panel{max-height:none;border-right:none;}
+  .preview-area{max-height:none;padding:20px 12px 90px;}
+  .page-shell-wrap{width:100%;max-width:794px;}
+
+  .editor.mobile-mode-edit .preview-area{display:none;}
+  .editor.mobile-mode-preview .panel{display:none;}
+
+  .row2{grid-template-columns:1fr;}
+  .editor-toolbar{gap:4px;padding:8px 10px;bottom:14px;}
+  .editor-toolbar button{padding:9px 10px;font-size:12px;white-space:nowrap;}
+}
+
+@media print{ .page-shell{transform:none!important;} }
+/* ===================== CAMADA SAAS ===================== */
+.saas-hero{max-width:1180px;margin:0 auto;padding:54px 32px 28px;display:grid;grid-template-columns:1.25fr .75fr;gap:34px;align-items:end;}
+.saas-eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--sys-gold);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;}
+.saas-eyebrow::before{content:"";width:22px;height:1px;background:var(--sys-gold);}
+.saas-hero h1{font-family:var(--serif);font-style:italic;font-size:clamp(42px,6vw,70px);font-weight:400;line-height:.98;letter-spacing:-.02em;color:var(--sys-hi);margin:0 0 18px;max-width:730px;}
+.saas-hero h1 em{color:var(--sys-gold);font-style:normal;}
+.saas-hero p{color:var(--sys-mid);font-size:16px;line-height:1.65;max-width:620px;margin:0;}
+.saas-actions{display:flex;align-items:center;gap:14px;margin-top:25px;flex-wrap:wrap;}
+.saas-cta{border:0;background:var(--sys-gold);color:var(--sys-gold-ink);padding:13px 20px;border-radius:999px;font-weight:800;font-size:14px;box-shadow:0 8px 24px rgba(203,166,104,.18);}
+.saas-cta:hover{transform:translateY(-1px);filter:brightness(1.05);}
+.saas-note{font-size:12px;color:var(--sys-low);}
+.saas-proof{display:grid;gap:10px;padding:22px;border:1px solid var(--sys-border);border-radius:16px;background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.025));}
+.saas-proof strong{color:var(--sys-hi);font-size:28px;font-weight:700;}
+.saas-proof span{color:var(--sys-low);font-size:12px;line-height:1.45;}
+.saas-features{max-width:1180px;margin:0 auto;padding:0 32px 18px;display:flex;gap:10px;flex-wrap:wrap;}
+.saas-feature{border:1px solid var(--sys-border);border-radius:999px;padding:8px 13px;color:var(--sys-mid);font-size:12px;background:rgba(255,255,255,.035);}
+.gallery-wrap{padding-top:24px;}
+.gallery-head{display:flex;justify-content:space-between;gap:24px;align-items:end;}
+.gallery-head h2{font-family:var(--serif);font-style:italic;color:var(--sys-hi);font-size:31px;font-weight:400;margin:0 0 8px;}
+.gallery-head h1{display:none;}
+.gallery-head p{max-width:600px;}
+.gallery-label{font-size:11px;color:var(--sys-gold);font-weight:800;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+@media (max-width:880px){
+  .saas-hero{padding:34px 16px 22px;display:block;}
+  .saas-hero h1{font-size:45px;}
+  .saas-proof{margin-top:28px;display:flex;align-items:center;justify-content:space-between;}
+  .saas-features{padding:0 16px 10px;}
+  .gallery-wrap{padding-top:18px;}
+  .gallery-head{display:block;}
+  .gallery-label{display:block;margin-bottom:8px;}
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="mark">Currículo Fácil</span>
+    <span class="tag">seu currículo profissional, grátis</span>
+  </div>
+  <div class="steps">
+    <span id="stepTag1" class="active">1. Escolher modelo</span>
+    <span id="stepTag2">2. Editar</span>
+  </div>
+  <div class="topbar-actions" id="topActions" style="display:none;">
+    <button class="btn ghost" onclick="goToGallery()">← Trocar modelo</button>
+  </div>
+</div>
+
+<!-- ===================== GALERIA ===================== -->
+<div class="view active" id="viewGallery">
+  <section class="saas-hero">
+    <div>
+      <div class="saas-eyebrow">Seu próximo passo profissional</div>
+      <h1>Monte um currículo que <em>abre portas.</em></h1>
+      <p>Uma ferramenta simples, bonita e gratuita para você criar seu currículo em poucos minutos — sem cadastro, sem paywall e com PDF pronto para enviar.</p>
+      <div class="saas-actions">
+        <button class="saas-cta" onclick="document.getElementById('models').scrollIntoView({behavior:'smooth'})">Começar grátis →</button>
+        <span class="saas-note">100% gratuito · seus dados ficam no seu navegador</span>
+      </div>
+    </div>
+    <div class="saas-proof"><strong>11 modelos</strong><span>Escolha o visual que combina com sua área, personalize cada detalhe e baixe seu currículo em PDF.</span></div>
+  </section>
+  <div class="saas-features">
+    <span class="saas-feature">✓ Sem cadastro</span><span class="saas-feature">✓ Exportação em PDF</span><span class="saas-feature">✓ Editável no celular</span><span class="saas-feature">✓ Seus dados são seus</span>
+  </div>
+  <div class="gallery-wrap" id="models">
+    <div class="gallery-head">
+      <div><span class="gallery-label">Comece agora</span><h1>Escolha um modelo</h1><h2>Escolha um modelo e comece a editar</h2><p>Preencha seus dados, ajuste o estilo e baixe um currículo profissional pronto para compartilhar.</p></div>
+    </div>
+    <div class="grid" id="galleryGrid"></div>
+  </div>
+</div>
+
+<!-- ===================== EDITOR ===================== -->
+<div class="view" id="viewEditor">
+  <div class="mobile-tabs" id="mobileTabs">
+    <button class="mtab active" data-tab="edit" onclick="setMobileTab('edit')">✎ Editar</button>
+    <button class="mtab" data-tab="preview" onclick="setMobileTab('preview')">👁 Visualizar</button>
+  </div>
+  <div class="editor mobile-mode-edit" id="editorGrid">
+    <div class="panel" id="panel"></div>
+    <div class="preview-area">
+      <div class="page-shell-wrap" id="pageShellWrap">
+        <div class="page-shell" id="pageShell"><div id="resume"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="editor-toolbar">
+    <button onclick="goToGallery()">🡐 Modelos</button>
+    <div class="divider"></div>
+    <button onclick="printResume()">🖨️ Imprimir</button>
+    <button onclick="downloadPDF()">⬇️ Baixar PDF</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   MODELO DE DADOS
+   ============================================================ */
+const SAVED_DATA_KEY = 'curriculo-facil-data-v1';
+let data = {
+  fullName:'Seu Nome Completo',
+  role:'Cargo desejado',
+  email:'voce@email.com',
+  phone:'(11) 90000-0000',
+  location:'São Paulo, SP',
+  linkedin:'linkedin.com/in/seunome',
+  photo:'',
+  summary:'Escreva aqui um resumo curto sobre sua trajetória, principais habilidades e o que você busca profissionalmente.',
+  experience:[
+    {id:1, role:'Cargo', company:'Empresa', dates:'2022 — atual', desc:'Descreva suas principais responsabilidades e resultados.'}
+  ],
+  education:[
+    {id:1, course:'Curso / Formação', school:'Instituição', dates:'2018 — 2022'}
+  ],
+  skills:'Comunicação, Organização, Excel',
+  languages:'Português (nativo), Inglês (avançado)'
+};
+let expCounter=1, eduCounter=1;
+
+/* ============================================================
+   MODELOS (TEMPLATES)
+   ============================================================ */
+const templates = [
+  {id:'executivo', name:'Executivo Clássico', structure:'executivo', desc:'Serifado, centrado, sóbrio',
+    colors:['#1e3a5f','#3d4f7d','#2b2b2b','#556b2f'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}]},
+  {id:'sidebar', name:'Sidebar Moderno', structure:'sidebar', desc:'Coluna lateral com contato',
+    colors:['#0f766e','#1e3a5f','#7c2d3c','#3d4f7d'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true},{key:'sideRight',label:'Coluna à direita',default:false}]},
+  {id:'minimal', name:'Minimalista', structure:'minimal', desc:'Espaço em branco, discreto',
+    colors:['#2b2b2b','#556b2f','#1e3a5f','#7c2d3c'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}]},
+  {id:'criativo', name:'Criativo Colorido', structure:'criativo', desc:'Bloco de cor no topo',
+    colors:['#a0522d','#0f766e','#7c2d3c','#3d4f7d'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}]},
+  {id:'corporativo', name:'Corporativo', structure:'corporativo', desc:'Faixa lateral, direto ao ponto',
+    colors:['#1a2b4a','#1e3a5f','#556b2f','#2b2b2b'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}]},
+  {id:'elegante', name:'Elegante Serif', structure:'elegante', desc:'Tipografia refinada, centrado',
+    colors:['#6b2d5c','#7c2d3c','#1a2b4a','#556b2f'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}]},
+  {id:'tech', name:'Tech / Dev', structure:'tech', desc:'Cabeçalho escuro, estilo terminal',
+    colors:['#0e7490','#556b2f','#a0522d','#6b2d5c'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}]},
+  {id:'compacto', name:'Compacto Duas Colunas', structure:'compacto', desc:'Denso, aproveita o espaço',
+    colors:['#556b2f','#1e3a5f','#7c2d3c','#a0522d'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}]},
+  {id:'timeline', name:'Timeline Vertical', structure:'timeline', desc:'Linha do tempo para experiências',
+    colors:['#7c2d3c','#0f766e','#1a2b4a','#a0522d'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}]},
+  {id:'cartao', name:'Cartão de Perfil', structure:'cartao', desc:'Foto em destaque, cartão suave',
+    colors:['#3d4f7d','#0f766e','#a0522d','#6b2d5c'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}]},
+  {id:'branco', name:'Em branco', structure:'minimal', desc:'Comece do zero',
+    colors:['#2b2b2b','#1e3a5f','#556b2f','#7c2d3c'], accent:0,
+    layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}], blank:true}
+];
+
+try { const saved = localStorage.getItem(SAVED_DATA_KEY); if (saved) data = {...data, ...JSON.parse(saved)}; } catch (e) {}
+let currentTemplate = null;
+let currentOptions = {};
+
+/* ============================================================
+   THUMBNAILS DA GALERIA (mini-representações CSS)
+   ============================================================ */
+function thumbSVG(t){
+  const c = t.colors[t.accent];
+  const layouts = {
+    executivo:`<div class="thumb-block" style="left:20%;top:12%;width:60%;height:8px;background:${c}"></div>
+      <div class="thumb-line" style="left:30%;top:26%;width:40%;height:5px"></div>
+      <div class="thumb-line" style="left:12%;top:42%;width:76%;height:4px"></div>
+      <div class="thumb-line" style="left:12%;top:50%;width:76%;height:4px"></div>
+      <div class="thumb-line" style="left:12%;top:64%;width:50%;height:4px"></div>`,
+    sidebar:`<div class="thumb-block" style="left:0;top:0;width:32%;height:100%;background:${c}"></div>
+      <div class="thumb-line" style="left:40%;top:14%;width:45%;height:6px"></div>
+      <div class="thumb-line" style="left:40%;top:30%;width:50%;height:4px"></div>
+      <div class="thumb-line" style="left:40%;top:38%;width:50%;height:4px"></div>
+      <div class="thumb-line" style="left:40%;top:58%;width:35%;height:4px"></div>`,
+    minimal:`<div class="thumb-line" style="left:10%;top:16%;width:38%;height:7px;background:#333"></div>
+      <div class="thumb-line" style="left:10%;top:30%;width:80%;height:1px"></div>
+      <div class="thumb-line" style="left:10%;top:42%;width:70%;height:4px"></div>
+      <div class="thumb-line" style="left:10%;top:50%;width:70%;height:4px"></div>
+      <div class="thumb-line" style="left:10%;top:66%;width:50%;height:4px"></div>`,
+    criativo:`<div class="thumb-block" style="left:0;top:0;width:100%;height:34%;background:${c}"></div>
+      <div class="thumb-line" style="left:10%;top:46%;width:75%;height:4px"></div>
+      <div class="thumb-line" style="left:10%;top:54%;width:75%;height:4px"></div>
+      <div class="thumb-line" style="left:10%;top:70%;width:45%;height:4px"></div>`,
+    corporativo:`<div class="thumb-block" style="left:0;top:0;width:6%;height:100%;background:${c}"></div>
+      <div class="thumb-line" style="left:14%;top:14%;width:50%;height:6px"></div>
+      <div class="thumb-block" style="left:14%;top:30%;width:35%;height:6px;background:#eee"></div>
+      <div class="thumb-line" style="left:14%;top:46%;width:70%;height:4px"></div>
+      <div class="thumb-line" style="left:14%;top:54%;width:70%;height:4px"></div>`,
+    elegante:`<div class="thumb-line" style="left:25%;top:16%;width:50%;height:6px;background:#333"></div>
+      <div class="thumb-block" style="left:44%;top:30%;width:12%;height:2px;background:${c}"></div>
+      <div class="thumb-line" style="left:20%;top:42%;width:60%;height:4px"></div>
+      <div class="thumb-line" style="left:20%;top:50%;width:60%;height:4px"></div>
+      <div class="thumb-line" style="left:20%;top:64%;width:40%;height:4px"></div>`,
+    tech:`<div class="thumb-block" style="left:0;top:0;width:100%;height:30%;background:#161b22"></div>
+      <div class="thumb-line" style="left:10%;top:10%;width:40%;height:5px;background:#fff"></div>
+      <div class="thumb-line" style="left:10%;top:20%;width:25%;height:4px;background:${c}"></div>
+      <div class="thumb-line" style="left:10%;top:44%;width:70%;height:4px"></div>
+      <div class="thumb-line" style="left:10%;top:52%;width:70%;height:4px"></div>`,
+    compacto:`<div class="thumb-line" style="left:10%;top:12%;width:40%;height:5px"></div>
+      <div class="thumb-line" style="left:10%;top:28%;width:38%;height:4px"></div>
+      <div class="thumb-line" style="left:10%;top:36%;width:38%;height:4px"></div>
+      <div class="thumb-line" style="left:54%;top:28%;width:36%;height:4px"></div>
+      <div class="thumb-line" style="left:54%;top:36%;width:36%;height:4px"></div>`,
+    timeline:`<div class="thumb-line" style="left:14%;top:10%;width:12%;height:80%;width:2px;background:${c}"></div>
+      <div class="thumb-line" style="left:24%;top:16%;width:60%;height:5px"></div>
+      <div class="thumb-line" style="left:24%;top:36%;width:55%;height:5px"></div>
+      <div class="thumb-line" style="left:24%;top:56%;width:55%;height:5px"></div>`,
+    cartao:`<div class="thumb-block" style="left:8%;top:10%;width:84%;height:22%;background:${c}22;border-radius:6px"></div>
+      <div class="thumb-line" style="left:14%;top:44%;width:70%;height:4px"></div>
+      <div class="thumb-line" style="left:14%;top:52%;width:70%;height:4px"></div>
+      <div class="thumb-line" style="left:14%;top:68%;width:45%;height:4px"></div>`
+  };
+  return layouts[t.structure] || '';
+}
+
+function renderGallery(){
+  const grid = document.getElementById('galleryGrid');
+  grid.innerHTML = templates.map(t=>{
+    if(t.blank){
+      return `<div class="card blank" onclick="chooseTemplate('${t.id}')">
+        <div class="thumb"><span class="plus">+</span></div>
+        <div class="card-name"><b>Começar do zero</b><span>Página em branco, edite tudo</span></div>
+      </div>`;
+    }
+    return `<div class="card" onclick="chooseTemplate('${t.id}')">
+      <div class="thumb" style="background:#fafaf8;">${thumbSVG(t)}</div>
+      <div class="card-name"><b>${t.name}</b><span>${t.desc}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function chooseTemplate(id){
+  currentTemplate = templates.find(t=>t.id===id);
+  currentOptions = {};
+  currentTemplate.layoutOpts.forEach(o=> currentOptions[o.key]=o.default);
+  currentOptions.colorIndex = currentTemplate.accent;
+  currentOptions.textStrong = '#1c1c1c';
+  currentOptions.textBody = '#333333';
+  document.getElementById('viewGallery').classList.remove('active');
+  document.getElementById('viewEditor').classList.add('active');
+  document.getElementById('stepTag1').classList.remove('active');
+  document.getElementById('stepTag2').classList.add('active');
+  document.getElementById('topActions').style.display='flex';
+  setMobileTab('edit');
+  renderPanel();
+  renderPreview();
+}
+
+function goToGallery(){
+  document.getElementById('viewEditor').classList.remove('active');
+  document.getElementById('viewGallery').classList.add('active');
+  document.getElementById('stepTag1').classList.add('active');
+  document.getElementById('stepTag2').classList.remove('active');
+  document.getElementById('topActions').style.display='none';
+}
+
+/* ---------- alternador Editar / Visualizar no celular ---------- */
+function setMobileTab(tab){
+  const grid = document.getElementById('editorGrid');
+  grid.className = 'editor mobile-mode-' + tab;
+  document.querySelectorAll('.mtab').forEach(b=> b.classList.toggle('active', b.dataset.tab===tab));
+  requestAnimationFrame(scalePreview);
+}
+
+/* encolhe o conteúdo do currículo para sempre caber em uma única folha A4 */
+function fitResumeToPage(){
+  const resume = document.getElementById('resume');
+  if(!resume) return;
+  resume.style.transform = 'none';
+  const natural = resume.scrollHeight;
+  const maxH = 1123;
+  if(natural > maxH){
+    const scale = Math.max(maxH / natural, 0.55);
+    resume.style.transform = 'scale(' + scale + ')';
+  }
+}
+
+/* encolhe a folha A4 para caber na tela, sem cortar conteúdo */
+function scalePreview(){
+  const wrap = document.getElementById('pageShellWrap');
+  const shell = document.getElementById('pageShell');
+  if(!wrap || !shell) return;
+  if(window.innerWidth <= 880){
+    const scale = wrap.clientWidth / 794;
+    shell.style.transform = 'scale(' + scale + ')';
+    wrap.style.height = (shell.offsetHeight * scale) + 'px';
+  } else {
+    shell.style.transform = '';
+    wrap.style.height = '';
+  }
+}
+let resizeTimer;
+window.addEventListener('resize', ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(scalePreview, 120);
+});
+
+/* ============================================================
+   PAINEL DE EDIÇÃO
+   ============================================================ */
+function renderPanel(){
+  const p = document.getElementById('panel');
+  let html = '';
+
+  // aparência
+  html += `<div class="panel-section">
+    <h3>Cores</h3>
+    <div class="field"><label>Cor de destaque (títulos de seção, ícones)</label></div>
+    <div class="swatches">
+      ${currentTemplate.colors.map((c,i)=>`<span class="swatch ${i===currentOptions.colorIndex?'active':''}" style="background:${c}" onclick="setColor(${i})"></span>`).join('')}
+    </div>
+    <div class="row2" style="margin-top:16px;">
+      <div class="field">
+        <label>Cor do nome e títulos</label>
+        <input type="color" value="${currentOptions.textStrong}" oninput="setTextColor('textStrong', this.value)" style="width:100%;height:34px;padding:2px;border:1px solid var(--line);border-radius:6px;background:#fdfdfc;">
+      </div>
+      <div class="field">
+        <label>Cor do texto do corpo</label>
+        <input type="color" value="${currentOptions.textBody}" oninput="setTextColor('textBody', this.value)" style="width:100%;height:34px;padding:2px;border:1px solid var(--line);border-radius:6px;background:#fdfdfc;">
+      </div>
+    </div>
+    <div class="small-note">Nas áreas com fundo colorido do modelo (ex.: barra lateral, cabeçalho escuro), o texto continua branco automaticamente para manter a leitura.</div>
+    ${currentTemplate.layoutOpts.length ? `<div style="margin-top:16px;">
+      ${currentTemplate.layoutOpts.map(o=>`
+        <div class="toggle-row">
+          <input type="checkbox" id="opt_${o.key}" ${currentOptions[o.key]?'checked':''} onchange="setOption('${o.key}', this.checked)">
+          <label for="opt_${o.key}" style="margin:0;">${o.label}</label>
+        </div>`).join('')}
+    </div>` : ''}
+  </div>`;
+
+  // foto
+  html += `<div class="panel-section">
+    <h3>Foto (opcional)</h3>
+    <div class="photo-upload">
+      <img class="photo-preview" id="photoPreview" src="${data.photo || 'https://placehold.co/88x88/eee/999?text=%20'}">
+      <label class="btn">Enviar foto<input type="file" accept="image/*" style="display:none" onchange="uploadPhoto(event)"></label>
+    </div>
+  </div>`;
+
+  // dados pessoais
+  html += `<div class="panel-section">
+    <h3>Dados pessoais</h3>
+    <div class="field"><label>Nome completo</label><input value="${esc(data.fullName)}" oninput="upd('fullName',this.value)"></div>
+    <div class="field"><label>Cargo / área desejada</label><input value="${esc(data.role)}" oninput="upd('role',this.value)"></div>
+    <div class="row2">
+      <div class="field"><label>E-mail</label><input value="${esc(data.email)}" oninput="upd('email',this.value)"></div>
+      <div class="field"><label>Telefone</label><input value="${esc(data.phone)}" oninput="upd('phone',this.value)"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Cidade / UF</label><input value="${esc(data.location)}" oninput="upd('location',this.value)"></div>
+      <div class="field"><label>LinkedIn / site</label><input value="${esc(data.linkedin)}" oninput="upd('linkedin',this.value)"></div>
+    </div>
+  </div>`;
+
+  // resumo
+  html += `<div class="panel-section">
+    <h3>Resumo profissional</h3>
+    <div class="field"><textarea oninput="upd('summary',this.value)">${esc(data.summary)}</textarea></div>
+  </div>`;
+
+  // experiência
+  html += `<div class="panel-section"><h3>Experiência profissional</h3>`;
+  data.experience.forEach(item=>{
+    html += `<div class="entry-block">
+      <button class="remove" onclick="removeItem('experience',${item.id})">✕</button>
+      <div class="field"><label>Cargo</label><input value="${esc(item.role)}" oninput="updItem('experience',${item.id},'role',this.value)"></div>
+      <div class="field"><label>Empresa</label><input value="${esc(item.company)}" oninput="updItem('experience',${item.id},'company',this.value)"></div>
+      <div class="field"><label>Período</label><input value="${esc(item.dates)}" oninput="updItem('experience',${item.id},'dates',this.value)"></div>
+      <div class="field"><label>Descrição</label><textarea oninput="updItem('experience',${item.id},'desc',this.value)">${esc(item.desc)}</textarea></div>
+    </div>`;
+  });
+  html += `<button class="add-btn" onclick="addItem('experience')">+ Adicionar experiência</button></div>`;
+
+  // educação
+  html += `<div class="panel-section"><h3>Educação</h3>`;
+  data.education.forEach(item=>{
+    html += `<div class="entry-block">
+      <button class="remove" onclick="removeItem('education',${item.id})">✕</button>
+      <div class="field"><label>Curso / Formação</label><input value="${esc(item.course)}" oninput="updItem('education',${item.id},'course',this.value)"></div>
+      <div class="field"><label>Instituição</label><input value="${esc(item.school)}" oninput="updItem('education',${item.id},'school',this.value)"></div>
+      <div class="field"><label>Período</label><input value="${esc(item.dates)}" oninput="updItem('education',${item.id},'dates',this.value)"></div>
+    </div>`;
+  });
+  html += `<button class="add-btn" onclick="addItem('education')">+ Adicionar formação</button></div>`;
+
+  // habilidades e idiomas
+  html += `<div class="panel-section">
+    <h3>Habilidades</h3>
+    <div class="field"><textarea oninput="upd('skills',this.value)">${esc(data.skills)}</textarea></div>
+    <div class="small-note">Separe por vírgula.</div>
+  </div>`;
+  html += `<div class="panel-section">
+    <h3>Idiomas</h3>
+    <div class="field"><textarea oninput="upd('languages',this.value)">${esc(data.languages)}</textarea></div>
+    <div class="small-note">Separe por vírgula.</div>
+  </div>`;
+
+  p.innerHTML = html;
+}
+
+function esc(s){ return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function persistData(){ try { localStorage.setItem(SAVED_DATA_KEY, JSON.stringify(data)); } catch (e) {} }
+function upd(field,val){ data[field]=val; persistData(); renderPreview(); }
+function updItem(list,id,field,val){
+  const item = data[list].find(x=>x.id===id);
+  if(item){ item[field]=val; persistData(); renderPreview(); }
+}
+function addItem(list){
+  if(list==='experience'){ expCounter++; data.experience.push({id:expCounter, role:'Cargo', company:'Empresa', dates:'', desc:''}); }
+  else { eduCounter++; data.education.push({id:eduCounter, course:'Curso', school:'Instituição', dates:''}); }
+  persistData(); renderPanel(); renderPreview();
+}
+function removeItem(list,id){
+  data[list] = data[list].filter(x=>x.id!==id);
+  persistData();
+  renderPanel(); renderPreview();
+}
+function setColor(i){ currentOptions.colorIndex=i; renderPanel(); renderPreview(); }
+function setTextColor(key,val){ currentOptions[key]=val; renderPreview(); }
+function setOption(key,val){ currentOptions[key]=val; renderPreview(); }
+function uploadPhoto(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{ data.photo = reader.result; persistData(); renderPanel(); renderPreview(); };
+  reader.readAsDataURL(file);
+}
+
+/* ============================================================
+   RENDERIZAÇÃO DO CURRÍCULO
+   ============================================================ */
+function hexToRgb(hex){
+  hex = hex.replace('#','');
+  const bigint = parseInt(hex,16);
+  return [(bigint>>16)&255,(bigint>>8)&255,bigint&255];
+}
+function shade(hex, amt){
+  const [r,g,b] = hexToRgb(hex);
+  const f = v => Math.max(0,Math.min(255, Math.round(v*(1+amt))));
+  return `rgb(${f(r)},${f(g)},${f(b)})`;
+}
+
+function skillsHTML(){
+  return data.skills.split(',').map(s=>s.trim()).filter(Boolean)
+    .map(s=>`<span class="r-skill-tag">${esc(s)}</span>`).join('');
+}
+function langHTML(){
+  return data.languages.split(',').map(s=>s.trim()).filter(Boolean)
+    .map(s=>`<div class="r-lang-item">${esc(s)}</div>`).join('');
+}
+function expHTML(){
+  return data.experience.map(i=>`
+    <div class="r-exp-item">
+      <div class="r-exp-top"><span>${esc(i.role)}</span><span>${esc(i.dates)}</span></div>
+      <div class="r-exp-sub">${esc(i.company)}</div>
+      <div class="r-exp-desc">${esc(i.desc)}</div>
+    </div>`).join('');
+}
+function eduHTML(){
+  return data.education.map(i=>`
+    <div class="r-edu-item">
+      <div class="r-exp-top"><span>${esc(i.course)}</span><span>${esc(i.dates)}</span></div>
+      <div class="r-exp-sub">${esc(i.school)}</div>
+    </div>`).join('');
+}
+function contactLine(sep){
+  return [data.email,data.phone,data.location,data.linkedin].filter(Boolean).join(sep);
+}
+function photoImg(cls){
+  return data.photo ? `<img class="photo ${cls}" src="${data.photo}">` : `<div class="photo ${cls}" style="background:#ddd;"></div>`;
+}
+
+function renderPreview(){
+  const t = currentTemplate;
+  const acc = t.colors[currentOptions.colorIndex];
+  const accDark = shade(acc,-0.35);
+  const accLight = shade(acc,0.5);
+  const el = document.getElementById('resume');
+  el.style.setProperty('--acc', acc);
+  el.style.setProperty('--acc-dark', accDark);
+  el.style.setProperty('--acc-light', accLight);
+  el.style.setProperty('--acc-10', acc+'1a');
+  el.style.setProperty('--text-strong', currentOptions.textStrong);
+  el.style.setProperty('--text-body', currentOptions.textBody);
+
+  const showPhoto = currentOptions.showPhoto;
+  let html = '';
+
+  switch(t.structure){
+    case 'executivo':
+      el.className = 's-executivo';
+      html = `
+        <div class="head">
+          ${showPhoto?photoImg('exec-photo'):''}
+          <h1 class="r-name">${esc(data.fullName)}</h1>
+          <div class="r-role">${esc(data.role)}</div>
+          <div class="r-contact">${contactLine(' · ')}</div>
+        </div>
+        <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+        <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+        <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+        <section><div class="r-sectitle">Habilidades</div>${skillsHTML()}</section>
+        <section><div class="r-sectitle">Idiomas</div>${langHTML()}</section>`;
+      break;
+
+    case 'sidebar':
+      el.className = 's-sidebar' + (currentOptions.sideRight ? ' side-right' : '');
+      if(currentOptions.sideRight) el.style.flexDirection='row-reverse'; else el.style.flexDirection='row';
+      html = `
+        <div class="side">
+          ${showPhoto?photoImg('photo'):''}
+          <div class="r-name">${esc(data.fullName)}</div>
+          <div class="r-role">${esc(data.role)}</div>
+          <div class="r-contact">${data.email}<br>${data.phone}<br>${data.location}<br>${data.linkedin}</div>
+          <div class="r-sectitle">Habilidades</div>${skillsHTML()}
+          <div class="r-sectitle">Idiomas</div>${langHTML()}
+        </div>
+        <div class="main">
+          <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+          <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+          <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+        </div>`;
+      break;
+
+    case 'minimal':
+      el.className = 's-minimal';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${[data.email,data.phone,data.location].filter(Boolean).map(c=>`<span>${c}</span>`).join('')}</div>
+            </div>
+          </div>
+        </div>
+        <section><div class="r-sectitle">Resumo</div><div class="r-summary" style="margin-top:8px;">${esc(data.summary)}</div></section>
+        <section><div class="r-sectitle">Experiência</div><div style="margin-top:10px;">${expHTML()}</div></section>
+        <section><div class="r-sectitle">Educação</div><div style="margin-top:10px;">${eduHTML()}</div></section>
+        <section><div class="r-sectitle">Habilidades</div><div style="margin-top:10px;">${skillsHTML()}</div></section>
+        <section><div class="r-sectitle">Idiomas</div><div style="margin-top:10px;">${langHTML()}</div></section>`;
+      break;
+
+    case 'criativo':
+      el.className = 's-criativo';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${contactLine('  •  ')}</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+          <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+          <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+          <section><div class="r-sectitle">Habilidades</div>${skillsHTML()}</section>
+          <section><div class="r-sectitle">Idiomas</div>${langHTML()}</section>
+        </div>`;
+      break;
+
+    case 'corporativo':
+      el.className = 's-corporativo';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${contactLine(' · ')}</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <section><div class="r-sectitle">Resumo</div><div class="r-summary" style="margin-top:8px;">${esc(data.summary)}</div></section>
+          <section><div class="r-sectitle">Experiência</div><div style="margin-top:8px;">${expHTML()}</div></section>
+          <section><div class="r-sectitle">Educação</div><div style="margin-top:8px;">${eduHTML()}</div></section>
+          <section><div class="r-sectitle">Habilidades</div><div style="margin-top:8px;">${skillsHTML()}</div></section>
+          <section><div class="r-sectitle">Idiomas</div><div style="margin-top:8px;">${langHTML()}</div></section>
+        </div>`;
+      break;
+
+    case 'elegante':
+      el.className = 's-elegante';
+      html = `
+        <div class="head">
+          ${showPhoto?photoImg('eleg-photo'):''}
+          <h1 class="r-name">${esc(data.fullName)}</h1>
+          <div class="r-role">${esc(data.role)}</div>
+        </div>
+        <div class="divider"></div>
+        <div class="r-contact">${contactLine('   ·   ')}</div>
+        <section style="margin-top:30px;"><div class="r-sectitle">Resumo</div><div class="r-summary" style="text-align:center;">${esc(data.summary)}</div></section>
+        <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+        <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+        <section><div class="r-sectitle">Habilidades</div><div style="text-align:center;">${skillsHTML()}</div></section>
+        <section><div class="r-sectitle">Idiomas</div><div style="text-align:center;">${langHTML()}</div></section>`;
+      break;
+
+    case 'tech':
+      el.className = 's-tech';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${contactLine('  |  ')}</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <section><div class="r-sectitle">summary</div><div class="r-summary">${esc(data.summary)}</div></section>
+          <section><div class="r-sectitle">experience</div>${expHTML()}</section>
+          <section><div class="r-sectitle">education</div>${eduHTML()}</section>
+          <section><div class="r-sectitle">skills</div>${skillsHTML()}</section>
+          <section><div class="r-sectitle">languages</div>${langHTML()}</section>
+        </div>`;
+      break;
+
+    case 'compacto':
+      el.className = 's-compacto';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${contactLine(' · ')}</div>
+            </div>
+          </div>
+        </div>
+        <div class="cols">
+          <div>
+            <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+            <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+          </div>
+          <div>
+            <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+            <section><div class="r-sectitle">Habilidades</div>${skillsHTML()}</section>
+            <section><div class="r-sectitle">Idiomas</div>${langHTML()}</section>
+          </div>
+        </div>`;
+      break;
+
+    case 'timeline':
+      el.className = 's-timeline';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${contactLine(' · ')}</div>
+            </div>
+          </div>
+        </div>
+        <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+        <section><div class="r-sectitle">Experiência</div><div class="tl">${expHTML()}</div></section>
+        <section><div class="r-sectitle">Educação</div><div class="tl">${eduHTML()}</div></section>
+        <section><div class="r-sectitle">Habilidades</div>${skillsHTML()}</section>
+        <section><div class="r-sectitle">Idiomas</div>${langHTML()}</section>`;
+      break;
+
+    case 'cartao':
+      el.className = 's-cartao';
+      html = `
+        <div class="head">
+          ${showPhoto?photoImg('photo'):''}
+          <div>
+            <div class="r-name">${esc(data.fullName)}</div>
+            <div class="r-role">${esc(data.role)}</div>
+            <div class="r-contact">${contactLine(' · ')}</div>
+          </div>
+        </div>
+        <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+        <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+        <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+        <section><div class="r-sectitle">Habilidades</div>${skillsHTML()}</section>
+        <section><div class="r-sectitle">Idiomas</div>${langHTML()}</section>`;
+      break;
+  }
+  el.innerHTML = html;
+  fitResumeToPage();
+  scalePreview();
+}
+
+/* ============================================================
+   EXPORTAÇÃO
+   ============================================================ */
+function printResume(){ window.print(); }
+
+function downloadPDF(){
+  const shell = document.getElementById('pageShell');
+  const wrap = document.getElementById('pageShellWrap');
+  const prevTransform = shell.style.transform;
+  const prevHeight = wrap.style.height;
+  shell.style.transform = '';
+  wrap.style.height = '';
+  html2canvas(shell, {scale:2, useCORS:true, windowWidth:794, windowHeight:1123}).then(canvas=>{
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p','pt','a4');
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const imgData = canvas.toDataURL('image/png');
+    pdf.addImage(imgData,'PNG',0,0,pageW,pageH);
+    const filename = (data.fullName || 'curriculo').trim().replace(/\s+/g,'_') + '.pdf';
+    pdf.save(filename);
+  }).finally(()=>{
+    shell.style.transform = prevTransform;
+    wrap.style.height = prevHeight;
+  });
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderGallery();
+</script>
+</body>
+</html>
