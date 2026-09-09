@@ -1,79 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Currículo Fácil</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-
-<div class="topbar">
-  <div class="brand">
-    <span class="mark">Currículo Fácil</span>
-    <span class="tag">seu currículo profissional, grátis</span>
-  </div>
-  <div class="steps">
-    <span id="stepTag1" class="active">1. Escolher modelo</span>
-    <span id="stepTag2">2. Editar</span>
-  </div>
-  <div class="topbar-actions" id="topActions" style="display:none;">
-    <button class="btn ghost" onclick="goToGallery()">← Trocar modelo</button>
-  </div>
-</div>
-
-<!-- ===================== GALERIA ===================== -->
-<div class="view active" id="viewGallery">
-  <section class="saas-hero">
-    <div>
-      <div class="saas-eyebrow">Seu próximo passo profissional</div>
-      <h1>Monte um currículo que <em>abre portas.</em></h1>
-      <p>Uma ferramenta simples, bonita e gratuita para você criar seu currículo em poucos minutos — sem cadastro, sem paywall e com PDF pronto para enviar.</p>
-      <div class="saas-actions">
-        <button class="saas-cta" onclick="document.getElementById('models').scrollIntoView({behavior:'smooth'})">Começar grátis →</button>
-        <span class="saas-note">100% gratuito · seus dados ficam no seu navegador</span>
-      </div>
-    </div>
-    <div class="saas-proof"><strong>11 modelos</strong><span>Escolha o visual que combina com sua área, personalize cada detalhe e baixe seu currículo em PDF.</span></div>
-  </section>
-  <div class="saas-features">
-    <span class="saas-feature">✓ Sem cadastro</span><span class="saas-feature">✓ Exportação em PDF</span><span class="saas-feature">✓ Editável no celular</span><span class="saas-feature">✓ Seus dados são seus</span>
-  </div>
-  <div class="gallery-wrap" id="models">
-    <div class="gallery-head">
-      <div><span class="gallery-label">Comece agora</span><h1>Escolha um modelo</h1><h2>Escolha um modelo e comece a editar</h2><p>Preencha seus dados, ajuste o estilo e baixe um currículo profissional pronto para compartilhar.</p></div>
-    </div>
-    <div class="grid" id="galleryGrid"></div>
-  </div>
-</div>
-
-<!-- ===================== EDITOR ===================== -->
-<div class="view" id="viewEditor">
-  <div class="mobile-tabs" id="mobileTabs">
-    <button class="mtab active" data-tab="edit" onclick="setMobileTab('edit')">✎ Editar</button>
-    <button class="mtab" data-tab="preview" onclick="setMobileTab('preview')">👁 Visualizar</button>
-  </div>
-  <div class="editor mobile-mode-edit" id="editorGrid">
-    <div class="panel" id="panel"></div>
-    <div class="preview-area">
-      <div class="page-shell-wrap" id="pageShellWrap">
-        <div class="page-shell" id="pageShell"><div id="resume"></div></div>
-      </div>
-    </div>
-  </div>
-  <div class="editor-toolbar">
-    <button onclick="goToGallery()">🡐 Modelos</button>
-    <div class="divider"></div>
-    <button onclick="printResume()">🖨️ Imprimir</button>
-    <button onclick="downloadPDF()">⬇️ Baixar PDF</button>
-  </div>
-</div>
-
-<script>
 /* ============================================================
    MODELO DE DADOS
    ============================================================ */
@@ -440,4 +364,275 @@ function expHTML(){
     <div class="r-exp-item">
       <div class="r-exp-top"><span>${esc(i.role)}</span><span>${esc(i.dates)}</span></div>
       <div class="r-exp-sub">${esc(i.company)}</div>
-      <div class="r-exp-desc">${esc(i<script src="js/app.js"></script>
+      <div class="r-exp-desc">${esc(i.desc)}</div>
+    </div>`).join('');
+}
+function eduHTML(){
+  return data.education.map(i=>`
+    <div class="r-edu-item">
+      <div class="r-exp-top"><span>${esc(i.course)}</span><span>${esc(i.dates)}</span></div>
+      <div class="r-exp-sub">${esc(i.school)}</div>
+    </div>`).join('');
+}
+function contactLine(sep){
+  return [data.email,data.phone,data.location,data.linkedin].filter(Boolean).join(sep);
+}
+function photoImg(cls){
+  return data.photo ? `<img class="photo ${cls}" src="${data.photo}">` : `<div class="photo ${cls}" style="background:#ddd;"></div>`;
+}
+
+function renderPreview(){
+  const t = currentTemplate;
+  const acc = t.colors[currentOptions.colorIndex];
+  const accDark = shade(acc,-0.35);
+  const accLight = shade(acc,0.5);
+  const el = document.getElementById('resume');
+  el.style.setProperty('--acc', acc);
+  el.style.setProperty('--acc-dark', accDark);
+  el.style.setProperty('--acc-light', accLight);
+  el.style.setProperty('--acc-10', acc+'1a');
+  el.style.setProperty('--text-strong', currentOptions.textStrong);
+  el.style.setProperty('--text-body', currentOptions.textBody);
+
+  const showPhoto = currentOptions.showPhoto;
+  let html = '';
+
+  switch(t.structure){
+    case 'executivo':
+      el.className = 's-executivo';
+      html = `
+        <div class="head">
+          ${showPhoto?photoImg('exec-photo'):''}
+          <h1 class="r-name">${esc(data.fullName)}</h1>
+          <div class="r-role">${esc(data.role)}</div>
+          <div class="r-contact">${contactLine(' · ')}</div>
+        </div>
+        <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+        <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+        <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+        <section><div class="r-sectitle">Habilidades</div>${skillsHTML()}</section>
+        <section><div class="r-sectitle">Idiomas</div>${langHTML()}</section>`;
+      break;
+
+    case 'sidebar':
+      el.className = 's-sidebar' + (currentOptions.sideRight ? ' side-right' : '');
+      if(currentOptions.sideRight) el.style.flexDirection='row-reverse'; else el.style.flexDirection='row';
+      html = `
+        <div class="side">
+          ${showPhoto?photoImg('photo'):''}
+          <div class="r-name">${esc(data.fullName)}</div>
+          <div class="r-role">${esc(data.role)}</div>
+          <div class="r-contact">${data.email}<br>${data.phone}<br>${data.location}<br>${data.linkedin}</div>
+          <div class="r-sectitle">Habilidades</div>${skillsHTML()}
+          <div class="r-sectitle">Idiomas</div>${langHTML()}
+        </div>
+        <div class="main">
+          <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+          <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+          <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+        </div>`;
+      break;
+
+    case 'minimal':
+      el.className = 's-minimal';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${[data.email,data.phone,data.location].filter(Boolean).map(c=>`<span>${c}</span>`).join('')}</div>
+            </div>
+          </div>
+        </div>
+        <section><div class="r-sectitle">Resumo</div><div class="r-summary" style="margin-top:8px;">${esc(data.summary)}</div></section>
+        <section><div class="r-sectitle">Experiência</div><div style="margin-top:10px;">${expHTML()}</div></section>
+        <section><div class="r-sectitle">Educação</div><div style="margin-top:10px;">${eduHTML()}</div></section>
+        <section><div class="r-sectitle">Habilidades</div><div style="margin-top:10px;">${skillsHTML()}</div></section>
+        <section><div class="r-sectitle">Idiomas</div><div style="margin-top:10px;">${langHTML()}</div></section>`;
+      break;
+
+    case 'criativo':
+      el.className = 's-criativo';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${contactLine('  •  ')}</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+          <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+          <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+          <section><div class="r-sectitle">Habilidades</div>${skillsHTML()}</section>
+          <section><div class="r-sectitle">Idiomas</div>${langHTML()}</section>
+        </div>`;
+      break;
+
+    case 'corporativo':
+      el.className = 's-corporativo';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${contactLine(' · ')}</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <section><div class="r-sectitle">Resumo</div><div class="r-summary" style="margin-top:8px;">${esc(data.summary)}</div></section>
+          <section><div class="r-sectitle">Experiência</div><div style="margin-top:8px;">${expHTML()}</div></section>
+          <section><div class="r-sectitle">Educação</div><div style="margin-top:8px;">${eduHTML()}</div></section>
+          <section><div class="r-sectitle">Habilidades</div><div style="margin-top:8px;">${skillsHTML()}</div></section>
+          <section><div class="r-sectitle">Idiomas</div><div style="margin-top:8px;">${langHTML()}</div></section>
+        </div>`;
+      break;
+
+    case 'elegante':
+      el.className = 's-elegante';
+      html = `
+        <div class="head">
+          ${showPhoto?photoImg('eleg-photo'):''}
+          <h1 class="r-name">${esc(data.fullName)}</h1>
+          <div class="r-role">${esc(data.role)}</div>
+        </div>
+        <div class="divider"></div>
+        <div class="r-contact">${contactLine('   ·   ')}</div>
+        <section style="margin-top:30px;"><div class="r-sectitle">Resumo</div><div class="r-summary" style="text-align:center;">${esc(data.summary)}</div></section>
+        <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+        <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+        <section><div class="r-sectitle">Habilidades</div><div style="text-align:center;">${skillsHTML()}</div></section>
+        <section><div class="r-sectitle">Idiomas</div><div style="text-align:center;">${langHTML()}</div></section>`;
+      break;
+
+    case 'tech':
+      el.className = 's-tech';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${contactLine('  |  ')}</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <section><div class="r-sectitle">summary</div><div class="r-summary">${esc(data.summary)}</div></section>
+          <section><div class="r-sectitle">experience</div>${expHTML()}</section>
+          <section><div class="r-sectitle">education</div>${eduHTML()}</section>
+          <section><div class="r-sectitle">skills</div>${skillsHTML()}</section>
+          <section><div class="r-sectitle">languages</div>${langHTML()}</section>
+        </div>`;
+      break;
+
+    case 'compacto':
+      el.className = 's-compacto';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${contactLine(' · ')}</div>
+            </div>
+          </div>
+        </div>
+        <div class="cols">
+          <div>
+            <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+            <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+          </div>
+          <div>
+            <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+            <section><div class="r-sectitle">Habilidades</div>${skillsHTML()}</section>
+            <section><div class="r-sectitle">Idiomas</div>${langHTML()}</section>
+          </div>
+        </div>`;
+      break;
+
+    case 'timeline':
+      el.className = 's-timeline';
+      html = `
+        <div class="head">
+          <div class="head-row">
+            ${showPhoto?photoImg('small-photo'):''}
+            <div class="head-text">
+              <h1 class="r-name">${esc(data.fullName)}</h1>
+              <div class="r-role">${esc(data.role)}</div>
+              <div class="r-contact">${contactLine(' · ')}</div>
+            </div>
+          </div>
+        </div>
+        <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+        <section><div class="r-sectitle">Experiência</div><div class="tl">${expHTML()}</div></section>
+        <section><div class="r-sectitle">Educação</div><div class="tl">${eduHTML()}</div></section>
+        <section><div class="r-sectitle">Habilidades</div>${skillsHTML()}</section>
+        <section><div class="r-sectitle">Idiomas</div>${langHTML()}</section>`;
+      break;
+
+    case 'cartao':
+      el.className = 's-cartao';
+      html = `
+        <div class="head">
+          ${showPhoto?photoImg('photo'):''}
+          <div>
+            <div class="r-name">${esc(data.fullName)}</div>
+            <div class="r-role">${esc(data.role)}</div>
+            <div class="r-contact">${contactLine(' · ')}</div>
+          </div>
+        </div>
+        <section><div class="r-sectitle">Resumo</div><div class="r-summary">${esc(data.summary)}</div></section>
+        <section><div class="r-sectitle">Experiência</div>${expHTML()}</section>
+        <section><div class="r-sectitle">Educação</div>${eduHTML()}</section>
+        <section><div class="r-sectitle">Habilidades</div>${skillsHTML()}</section>
+        <section><div class="r-sectitle">Idiomas</div>${langHTML()}</section>`;
+      break;
+  }
+  el.innerHTML = html;
+  fitResumeToPage();
+  scalePreview();
+}
+
+/* ============================================================
+   EXPORTAÇÃO
+   ============================================================ */
+function printResume(){ window.print(); }
+
+function downloadPDF(){
+  const shell = document.getElementById('pageShell');
+  const wrap = document.getElementById('pageShellWrap');
+  const prevTransform = shell.style.transform;
+  const prevHeight = wrap.style.height;
+  shell.style.transform = '';
+  wrap.style.height = '';
+  html2canvas(shell, {scale:2, useCORS:true, windowWidth:794, windowHeight:1123}).then(canvas=>{
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p','pt','a4');
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const imgData = canvas.toDataURL('image/png');
+    pdf.addImage(imgData,'PNG',0,0,pageW,pageH);
+    const filename = (data.fullName || 'curriculo').trim().replace(/\s+/g,'_') + '.pdf';
+    pdf.save(filename);
+  }).finally(()=>{
+    shell.style.transform = prevTransform;
+    wrap.style.height = prevHeight;
+  });
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderGallery();
