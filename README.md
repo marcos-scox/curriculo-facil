@@ -31,5 +31,6 @@ index.html                    Estrutura da aplicação
 css/styles.css                Estilos e responsividade
 js/app.js                     Editor, modelos, preview e exportação
 assets/                       Espaço para imagens e recursos futuros
+vendor/                       Bibliotecas locais de captura e geração de PDF
 .github/workflows/            Automação de publicação
 ```
