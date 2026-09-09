@@ -610,26 +610,52 @@ function renderPreview(){
    ============================================================ */
 function printResume(){ window.print(); }
 
-function downloadPDF(){
-  const shell = document.getElementById('pageShell');
-  const wrap = document.getElementById('pageShellWrap');
-  const prevTransform = shell.style.transform;
-  const prevHeight = wrap.style.height;
-  shell.style.transform = '';
-  wrap.style.height = '';
-  html2canvas(shell, {scale:2, useCORS:true, windowWidth:794, windowHeight:1123}).then(canvas=>{
+async function downloadPDF(){
+  const source = document.getElementById('resume');
+  if(!source || !window.html2canvas || !window.jspdf) return;
+
+  // Captura um clone com dimensões físicas fixas. Isso evita que o overflow
+  // do preview seja interpretado como uma segunda página pelo html2canvas.
+  const frame = document.createElement('div');
+  frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;height:1123px;overflow:hidden;background:#fff;z-index:-1;';
+  const clone = source.cloneNode(true);
+  clone.style.transform = 'none';
+  clone.style.width = '794px';
+  clone.style.minHeight = '0';
+  clone.style.height = 'auto';
+  frame.appendChild(clone);
+  document.body.appendChild(frame);
+
+  try{
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const naturalHeight = Math.max(clone.scrollHeight, clone.offsetHeight, 1);
+    const fit = Math.min(1, 1123 / naturalHeight);
+    clone.style.transformOrigin = 'top left';
+    clone.style.transform = `scale(${fit})`;
+    await new Promise(resolve=>requestAnimationFrame(resolve));
+
+    const canvas = await html2canvas(frame, {
+      scale:2,
+      width:794,
+      height:1123,
+      windowWidth:794,
+      windowHeight:1123,
+      backgroundColor:'#ffffff',
+      useCORS:true,
+      scrollX:0,
+      scrollY:0
+    });
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p','pt','a4');
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    const imgData = canvas.toDataURL('image/png');
-    pdf.addImage(imgData,'PNG',0,0,pageW,pageH);
+    const pdf = new jsPDF({orientation:'portrait', unit:'pt', format:'a4', compress:true});
+    pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',0,0,595.28,841.89);
     const filename = (data.fullName || 'curriculo').trim().replace(/\s+/g,'_') + '.pdf';
     pdf.save(filename);
-  }).finally(()=>{
-    shell.style.transform = prevTransform;
-    wrap.style.height = prevHeight;
-  });
+  }catch(error){
+    console.error('Não foi possível gerar o PDF:', error);
+    alert('Não foi possível gerar o PDF agora. Tente novamente em alguns segundos.');
+  }finally{
+    frame.remove();
+  }
 }
 
 /* ============================================================

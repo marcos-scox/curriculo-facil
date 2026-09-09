@@ -146,9 +146,9 @@ input,textarea{font-family:inherit;}
 .page-shell{
   width:794px;height:1123px;background:#fff;box-shadow:0 30px 70px rgba(0,0,0,.55);
   position:absolute;top:0;left:0;transform-origin:top left;
-  overflow:auto;
+  overflow:hidden;
 }
-#resume{width:100%;min-height:1123px;position:relative;transform-origin:top center;}
+#resume{width:100%;min-height:1123px;position:relative;transform-origin:top center;overflow:hidden;}
 
 /* ---------- alternador Editar / Visualizar (mobile) ---------- */
 .mobile-tabs{display:none;}
