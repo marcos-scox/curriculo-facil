@@ -29,7 +29,8 @@ Este site é estático e pode ser publicado pelo GitHub Pages usando o workflow 
 ```text
 index.html                    Estrutura da aplicação
 css/styles.css                Estilos e responsividade
-js/app.js                     Editor, modelos, preview e exportação
+js/app.js                     Código-fonte do editor e da exportação
+js/app-bundle.js              Bundle usado pelo site online
 assets/                       Espaço para imagens e recursos futuros
 vendor/                       Bibliotecas locais de captura e geração de PDF
 .github/workflows/            Automação de publicação
