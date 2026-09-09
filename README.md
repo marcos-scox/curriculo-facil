@@ -4,7 +4,7 @@ O Currículo Fácil é um SaaS gratuito e sem cadastro para qualquer pessoa mont
 
 ## Acesse o site
 
-**[Abrir o Currículo Fácil online](https://htmlpreview.github.io/?https://github.com/marcos-scox/curriculo-facil/blob/main/index.html)**
+**[Abrir o Currículo Fácil online](https://htmlpreview.github.io/?https://github.com/marcos-scox/curriculo-facil/blob/6c4ffa8/index.html)**
 
 O projeto também está disponível no [repositório do GitHub](https://github.com/marcos-scox/curriculo-facil).
 
