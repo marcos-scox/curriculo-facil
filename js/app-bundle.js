@@ -686,7 +686,7 @@ function renderPanel(){
     <h3>Foto (opcional)</h3>
     <div class="photo-upload photo-dropzone" onclick="document.getElementById('photoFile').click()" ondragover="event.preventDefault();this.classList.add('dragging')" ondragleave="this.classList.remove('dragging')" ondrop="event.preventDefault();this.classList.remove('dragging');handlePhotoFile(event.dataTransfer.files[0])">
       <img class="photo-preview" id="photoPreview" src="${data.photo || 'https://placehold.co/88x88/eee/999?text=%20'}">
-      <div><button type="button" class="btn" onclick="event.stopPropagation();document.getElementById('photoFile').click()">Selecionar foto</button><input id="photoFile" type="file" accept="image/*" capture="environment" onchange="uploadPhoto(event)"><div class="small-note">Toque para escolher ou arraste uma imagem</div></div>
+      <div class="photo-actions"><button type="button" class="btn" onclick="event.stopPropagation();document.getElementById('photoFile').click()">Escolher imagem</button><button type="button" class="btn camera-btn" onclick="event.stopPropagation();document.getElementById('cameraFile').click()">Abrir câmera</button><input id="photoFile" type="file" accept="image/*" onclick="event.stopPropagation()" onchange="uploadPhoto(event)"><input id="cameraFile" type="file" accept="image/*" capture="environment" onclick="event.stopPropagation()" onchange="uploadPhoto(event)"><div class="small-note">Escolha uma imagem da galeria/arquivos ou use a câmera.</div></div>
     </div>
     <div class="small-note">A foto será recortada em formato quadrado para não esticar no currículo.</div>
   </div>`;
