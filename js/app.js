@@ -74,6 +74,10 @@ let galleryCategory = 'Todos';
 try { const saved = localStorage.getItem(SAVED_DATA_KEY); if (saved) data = {...data, ...JSON.parse(saved)}; } catch (e) {}
 let currentTemplate = null;
 let currentOptions = {};
+const fontOptions = [
+  ['inter','Inter'],['fraunces','Fraunces'],['playfair','Playfair Display'],['instrument','Instrument Serif'],['jetbrains','JetBrains Mono'],
+  ['lora','Lora'],['dm-sans','DM Sans'],['space-grotesk','Space Grotesk'],['merriweather','Merriweather'],['source-sans','Source Sans 3']
+];
 
 /* ============================================================
    THUMBNAILS DA GALERIA (mini-representações CSS)
@@ -170,6 +174,7 @@ function chooseTemplate(id){
   currentOptions.colorIndex = currentTemplate.accent;
   currentOptions.textStrong = '#1c1c1c';
   currentOptions.textBody = '#333333';
+  currentOptions.fontFamily = 'inter';
   document.getElementById('viewGallery').classList.remove('active');
   document.getElementById('viewEditor').classList.add('active');
   document.getElementById('stepTag1').classList.remove('active');
@@ -248,6 +253,7 @@ function renderPanel(){
       </div>
     </div>
     <div class="small-note">Nas áreas com fundo colorido do modelo (ex.: barra lateral, cabeçalho escuro), o texto continua branco automaticamente para manter a leitura.</div>
+    <div class="field" style="margin-top:16px;"><label>Tipografia do currículo</label><select class="font-select" onchange="setFont(this.value)">${fontOptions.map(([value,label])=>`<option value="${value}" ${currentOptions.fontFamily===value?'selected':''}>${label}</option>`).join('')}</select></div>
     ${currentTemplate.layoutOpts.length ? `<div style="margin-top:16px;">
       ${currentTemplate.layoutOpts.map(o=>`
         <div class="toggle-row">
@@ -264,6 +270,7 @@ function renderPanel(){
       <img class="photo-preview" id="photoPreview" src="${data.photo || 'https://placehold.co/88x88/eee/999?text=%20'}">
       <label class="btn">Enviar foto<input type="file" accept="image/*" style="display:none" onchange="uploadPhoto(event)"></label>
     </div>
+    <div class="small-note">A foto será recortada em formato quadrado para não esticar no currículo.</div>
   </div>`;
 
   // dados pessoais
@@ -348,12 +355,51 @@ function removeItem(list,id){
 function setColor(i){ currentOptions.colorIndex=i; renderPanel(); renderPreview(); }
 function setTextColor(key,val){ currentOptions[key]=val; renderPreview(); }
 function setOption(key,val){ currentOptions[key]=val; renderPreview(); }
+function setFont(value){ currentOptions.fontFamily=value; renderPreview(); }
 function uploadPhoto(e){
   const file = e.target.files[0];
   if(!file) return;
   const reader = new FileReader();
-  reader.onload = ()=>{ data.photo = reader.result; persistData(); renderPanel(); renderPreview(); };
+  reader.onload = ()=> openCropper(reader.result);
   reader.readAsDataURL(file);
+}
+
+let cropImage = null;
+function openCropper(src){
+  cropImage = new Image();
+  cropImage.onload = ()=>{
+    document.getElementById('cropImage').src = src;
+    document.getElementById('cropZoom').value = '1';
+    document.getElementById('cropX').value = '50';
+    document.getElementById('cropY').value = '50';
+    document.getElementById('cropModal').classList.add('open');
+    updateCropPreview();
+  };
+  cropImage.src = src;
+}
+function updateCropPreview(){
+  if(!cropImage) return;
+  const frame = document.getElementById('cropFrame');
+  const zoom = Number(document.getElementById('cropZoom').value);
+  const x = Number(document.getElementById('cropX').value);
+  const y = Number(document.getElementById('cropY').value);
+  const scale = Math.max(frame.clientWidth / cropImage.width, frame.clientHeight / cropImage.height) * zoom;
+  const w = cropImage.width * scale, h = cropImage.height * scale;
+  const left = (frame.clientWidth - w) * (x / 100);
+  const top = (frame.clientHeight - h) * (y / 100);
+  const img = document.getElementById('cropImage');
+  img.style.width = w + 'px'; img.style.height = h + 'px'; img.style.left = left + 'px'; img.style.top = top + 'px';
+}
+function cancelCrop(){ document.getElementById('cropModal').classList.remove('open'); cropImage=null; }
+function applyCrop(){
+  if(!cropImage) return;
+  const size = 600, zoom = Number(document.getElementById('cropZoom').value), x = Number(document.getElementById('cropX').value), y = Number(document.getElementById('cropY').value);
+  const scale = Math.max(size / cropImage.width, size / cropImage.height) * zoom;
+  const w = cropImage.width * scale, h = cropImage.height * scale;
+  const left = (size - w) * (x / 100), top = (size - h) * (y / 100);
+  const canvas = document.createElement('canvas'); canvas.width=size; canvas.height=size;
+  const ctx = canvas.getContext('2d'); ctx.fillStyle='#eee'; ctx.fillRect(0,0,size,size); ctx.drawImage(cropImage,left,top,w,h);
+  data.photo = canvas.toDataURL('image/jpeg',.9); persistData(); cancelCrop(); renderPanel(); renderPreview();
 }
 
 /* ============================================================
@@ -620,6 +666,7 @@ function renderPreview(){
       break;
   }
   el.innerHTML = html;
+  el.classList.add('font-' + (currentOptions.fontFamily || 'inter'));
   fitResumeToPage();
   scalePreview();
 }

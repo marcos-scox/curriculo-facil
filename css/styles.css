@@ -121,6 +121,7 @@ input,textarea{font-family:inherit;}
 }
 .field textarea{resize:vertical;min-height:60px;line-height:1.4;}
 .field input:focus,.field textarea:focus{outline:2px solid var(--sys-gold);outline-offset:1px;}
+.font-select{width:100%;padding:9px 10px;border:1px solid var(--sys-border);border-radius:8px;background:rgba(255,255,255,.045);color:var(--sys-hi);font-size:13.5px;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
 .entry-block{border:1px solid var(--sys-border);border-radius:10px;padding:12px;margin-bottom:10px;position:relative;background:rgba(255,255,255,.03);}
@@ -147,6 +148,34 @@ input,textarea{font-family:inherit;}
 .photo-preview{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);object-fit:cover;border:1px solid var(--sys-border);}
 .photo-upload label.btn{padding:7px 12px;font-size:12.5px;}
 .small-note{font-size:11.5px;color:var(--sys-low);margin-top:4px;}
+
+/* ---------- recorte de foto ---------- */
+.crop-modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(3,5,12,.78);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:20px;}
+.crop-modal.open{display:flex;}
+.crop-dialog{width:min(460px,100%);background:var(--sys-bg-elev);border:1px solid var(--sys-border);border-radius:18px;padding:22px;box-shadow:0 24px 80px rgba(0,0,0,.55);}
+.crop-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.crop-head h2{color:var(--sys-hi);font-family:var(--serif);font-style:italic;font-size:28px;font-weight:400;margin:5px 0 0;}
+.crop-close{border:0;background:transparent;color:var(--sys-mid);font-size:28px;line-height:1;cursor:pointer;}
+.crop-help{color:var(--sys-low);font-size:12px;line-height:1.5;margin:12px 0 16px;}
+.crop-frame{position:relative;width:min(320px,100%);aspect-ratio:1;margin:0 auto 20px;overflow:hidden;background:#1d2232;border-radius:12px;border:1px solid var(--sys-border);}
+.crop-frame::after{content:"";position:absolute;inset:0;border:2px solid rgba(244,241,232,.85);border-radius:12px;pointer-events:none;box-shadow:0 0 0 999px rgba(0,0,0,.18);}
+.crop-frame img{position:absolute;max-width:none;transform:none;user-select:none;}
+.crop-controls{display:grid;gap:10px;}
+.crop-controls label{display:grid;grid-template-columns:84px 1fr;align-items:center;gap:10px;color:var(--sys-mid);font-size:12px;}
+.crop-controls input{accent-color:var(--sys-gold);width:100%;}
+.crop-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+
+/* Tipografia escolhida pelo usuário em todos os elementos do currículo. */
+#resume.font-inter *{font-family:'Inter',sans-serif!important;}
+#resume.font-fraunces *{font-family:'Fraunces',serif!important;}
+#resume.font-playfair *{font-family:'Playfair Display',serif!important;}
+#resume.font-instrument *{font-family:'Instrument Serif',serif!important;}
+#resume.font-jetbrains *{font-family:'JetBrains Mono',monospace!important;}
+#resume.font-lora *{font-family:'Lora',serif!important;}
+#resume.font-dm-sans *{font-family:'DM Sans',sans-serif!important;}
+#resume.font-space-grotesk *{font-family:'Space Grotesk',sans-serif!important;}
+#resume.font-merriweather *{font-family:'Merriweather',serif!important;}
+#resume.font-source-sans *{font-family:'Source Sans 3',sans-serif!important;}
 
 /* ---------- preview ---------- */
 .preview-area{
