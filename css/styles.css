@@ -216,8 +216,8 @@ input,textarea{font-family:inherit;}
 .s-executivo section{margin-bottom:22px;}
 
 /* -- sidebar-left (Sidebar Moderno) -- */
-.s-sidebar{display:flex;font-family:'Inter',sans-serif;min-height:1123px;}
-.s-sidebar .side{width:255px;background:var(--acc);color:#fff;padding:40px 26px;}
+.s-sidebar{display:flex;width:794px;height:1123px;min-height:1123px;font-family:'Inter',sans-serif;align-items:stretch;}
+.s-sidebar .side{width:255px;height:1123px;flex:0 0 255px;background:var(--acc);color:#fff;padding:40px 26px;}
 .s-sidebar .side .r-name{font-size:22px;font-weight:800;}
 .s-sidebar .side .r-role{color:#fff;opacity:.85;font-size:13px;}
 .s-sidebar .side .r-contact{color:#fff;opacity:.85;margin-top:16px;line-height:1.9;}
@@ -225,7 +225,7 @@ input,textarea{font-family:inherit;}
 .s-sidebar .side .r-sectitle{color:#fff;opacity:.9;margin-top:26px;}
 .s-sidebar .side .r-skill-tag{background:rgba(255,255,255,.16);color:#fff;}
 .s-sidebar .side .r-lang-item{color:#fff;opacity:.9;}
-.s-sidebar .main{flex:1;padding:40px 34px;}
+.s-sidebar .main{flex:1;height:1123px;padding:40px 34px;}
 .s-sidebar .main section{margin-bottom:22px;}
 
 /* -- header-left-minimal (Minimalista) -- */
@@ -246,7 +246,7 @@ input,textarea{font-family:inherit;}
 .s-criativo .r-sectitle::before{content:"";display:inline-block;width:8px;height:8px;background:var(--acc);border-radius:2px;margin-right:8px;}
 
 /* -- header-bar (Corporativo) -- */
-.s-corporativo{font-family:'Inter',sans-serif;border-left:8px solid var(--acc);min-height:1123px;}
+.s-corporativo{font-family:'Inter',sans-serif;border-left:8px solid var(--acc);width:794px;height:1123px;min-height:1123px;}
 .s-corporativo .head{padding:40px 48px 28px;}
 .s-corporativo .body{padding:0 48px 40px;}
 .s-corporativo .r-sectitle{background:#f2f1ec;padding:7px 12px;border-radius:4px;}
@@ -404,3 +404,11 @@ input,textarea{font-family:inherit;}
 .page-shell{width:794px;height:1123px;min-height:1123px;overflow:hidden;}
 #resume{width:794px;height:1123px;min-height:1123px;max-height:1123px;overflow:hidden;box-sizing:border-box;}
 #resume.s-sidebar,#resume.s-corporativo{min-height:1123px;height:1123px;}
+
+/* Padrão visual comum: todos os modelos ocupam uma folha A4 completa. */
+#resume{background:#fff;position:relative;isolation:isolate;}
+#resume.s-executivo,#resume.s-minimal,#resume.s-elegante,#resume.s-compacto,#resume.s-timeline,#resume.s-cartao{height:1123px;min-height:1123px;padding-bottom:48px;}
+#resume.s-criativo,#resume.s-tech{height:1123px;min-height:1123px;}
+#resume.s-criativo .body,#resume.s-tech .body{min-height:calc(1123px - 150px);}
+#resume.s-sidebar .side,#resume.s-sidebar .main{height:1123px;min-height:1123px;}
+#resume.s-corporativo .body{min-height:calc(1123px - 150px);}

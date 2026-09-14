@@ -613,17 +613,11 @@ function setMobileTab(tab){
   requestAnimationFrame(scalePreview);
 }
 
-/* encolhe o conteúdo do currículo para sempre caber em uma única folha A4 */
+/* Mantém tipografia e espaçamentos naturais; a folha A4 é o limite visual. */
 function fitResumeToPage(){
   const resume = document.getElementById('resume');
   if(!resume) return;
   resume.style.transform = 'none';
-  const natural = resume.scrollHeight;
-  const maxH = 1123;
-  if(natural > maxH){
-    const scale = Math.max(maxH / natural, 0.55);
-    resume.style.transform = 'scale(' + scale + ')';
-  }
 }
 
 /* encolhe a folha A4 para caber na tela, sem cortar conteúdo */
@@ -1070,10 +1064,8 @@ async function downloadPDF(){
 
   try{
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-    const naturalHeight = Math.max(clone.scrollHeight, clone.offsetHeight, 1);
-    const fit = Math.min(1, 1123 / naturalHeight);
     clone.style.transformOrigin = 'top left';
-    clone.style.transform = `scale(${fit})`;
+    clone.style.transform = 'none';
     await new Promise(resolve=>requestAnimationFrame(resolve));
 
     const canvas = await html2canvas(frame, {
