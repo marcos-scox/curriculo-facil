@@ -398,3 +398,9 @@ input,textarea{font-family:inherit;}
   .search-box{width:100%;}
   .model-count{display:block;margin-top:10px;}
 }
+
+/* Padronização A4: uma folha única, sem variações de altura entre modelos. */
+.page-shell-wrap{width:794px;height:1123px;flex:0 0 794px;}
+.page-shell{width:794px;height:1123px;min-height:1123px;overflow:hidden;}
+#resume{width:794px;height:1123px;min-height:1123px;max-height:1123px;overflow:hidden;box-sizing:border-box;}
+#resume.s-sidebar,#resume.s-corporativo{min-height:1123px;height:1123px;}

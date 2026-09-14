@@ -35,3 +35,7 @@ assets/                       Espaço para imagens e recursos futuros
 vendor/                       Bibliotecas locais de captura e geração de PDF
 .github/workflows/            Automação de publicação
 ```
+
+## Interface e formato
+
+Os estilos principais são embutidos no `index.html` para evitar o flash inicial de HTML sem CSS. Todos os modelos usam uma área uniforme de **uma folha A4** (794 × 1123 px em CSS), com recorte controlado no preview e exportação em PDF.
