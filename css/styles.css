@@ -67,6 +67,16 @@ input,textarea{font-family:inherit;}
   letter-spacing:.2px;margin:0 0 12px;color:var(--sys-hi);
 }
 .gallery-head p{color:var(--sys-low);font-size:15.5px;max-width:520px;margin:0;line-height:1.55;}
+.gallery-tools{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:24px 0 14px;}
+.search-box{display:flex;align-items:center;gap:9px;width:min(420px,100%);padding:11px 14px;border:1px solid var(--sys-border);border-radius:12px;background:rgba(255,255,255,.045);color:var(--sys-low);}
+.search-box:focus-within{border-color:var(--sys-gold);box-shadow:0 0 0 3px rgba(203,166,104,.1);}
+.search-box span{font-size:20px;line-height:1;}
+.search-box input{width:100%;border:0;outline:0;background:transparent;color:var(--sys-hi);font-size:13px;}
+.search-box input::placeholder{color:var(--sys-low);}
+.model-count{font-size:12px;color:var(--sys-low);white-space:nowrap;}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px;}
+.filter-chip{border:1px solid var(--sys-border);background:transparent;color:var(--sys-low);padding:8px 12px;border-radius:999px;font-size:12px;transition:all .15s ease;}
+.filter-chip:hover,.filter-chip.active{border-color:var(--sys-gold);background:rgba(203,166,104,.12);color:var(--sys-gold);}
 .grid{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
   gap:20px;
@@ -77,6 +87,9 @@ input,textarea{font-family:inherit;}
   display:flex;flex-direction:column;backdrop-filter:blur(6px);
 }
 .card:hover{box-shadow:0 14px 34px rgba(0,0,0,.35);transform:translateY(-3px);border-color:var(--sys-gold);}
+.card{position:relative;}
+.card::after{content:"Abrir modelo";position:absolute;right:10px;top:10px;opacity:0;transform:translateY(-4px);padding:5px 8px;border-radius:6px;background:var(--sys-gold);color:var(--sys-gold-ink);font-size:10px;font-weight:800;transition:all .15s ease;}
+.card:hover::after{opacity:1;transform:translateY(0);}
 .thumb{height:150px;position:relative;overflow:hidden;}
 .card-name{padding:14px 16px 16px;}
 .card-name b{display:block;font-size:14px;margin-bottom:3px;color:var(--sys-hi);font-weight:600;}
@@ -381,4 +394,7 @@ input,textarea{font-family:inherit;}
   .gallery-wrap{padding-top:18px;}
   .gallery-head{display:block;}
   .gallery-label{display:block;margin-bottom:8px;}
+  .gallery-tools{display:block;margin-top:20px;}
+  .search-box{width:100%;}
+  .model-count{display:block;margin-top:10px;}
 }

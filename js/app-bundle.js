@@ -478,6 +478,16 @@ const templates = [
     layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}], blank:true}
 ];
 
+// 50 variações novas usando as estruturas já testadas do editor.
+const extraTemplates = [
+  ['Aura Editorial','elegante','Elegante e editorial','elegante',['#8b5e83','#27374d','#a0522d']],['Âncora Executivo','executivo','Clássico e confiável','executivo',['#16324f','#6b4f3a','#3d4f7d']],['Norte Minimal','minimal','Minimalista e claro','minimal',['#1f2937','#0f766e','#7c2d3c']],['Verde Essencial','minimal','Natural e profissional','minimal',['#365314','#556b2f','#0f766e']],['Ponto Focal','criativo','Criativo e marcante','criativo',['#c2410c','#be185d','#0f766e']],['Terracota Studio','criativo','Quente e autoral','criativo',['#9a3412','#a0522d','#7c2d3c']],['Onda Digital','tech','Tecnologia e produto','tech',['#0891b2','#0e7490','#2563eb']],['Terminal Pro','tech','Código e engenharia','tech',['#16a34a','#556b2f','#6b2d5c']],['Linha Direta','corporativo','Objetivo e corporativo','corporativo',['#1e40af','#1a2b4a','#374151']],['Azul Conselho','corporativo','Sério e estratégico','corporativo',['#1d4ed8','#1e3a5f','#0f766e']],['Coluna Impacto','sidebar','Contato em destaque','sidebar',['#be123c','#7c2d3c','#6b2d5c']],['Verde Conexão','sidebar','Humano e moderno','sidebar',['#047857','#0f766e','#365314']],['Ritmo Profissional','timeline','Trajetória em destaque','timeline',['#db2777','#7c2d3c','#6b2d5c']],['Marco Azul','timeline','Evolução e carreira','timeline',['#2563eb','#1e3a5f','#0e7490']],['Duas Margens','compacto','Compacto e versátil','compacto',['#a16207','#556b2f','#a0522d']],['Grid Editorial','compacto','Informação bem organizada','compacto',['#334155','#1e3a5f','#7c2d3c']],['Perfil Íris','cartao','Cartão autoral','cartao',['#7c3aed','#6b2d5c','#3d4f7d']],['Perfil Solar','cartao','Leve e acolhedor','cartao',['#d97706','#a0522d','#7c2d3c']],['Forma Clássica','executivo','Elegância tradicional','executivo',['#44403c','#2b2b2b','#1e3a5f']],['Forma Contemporânea','executivo','Clássico atualizado','executivo',['#0f766e','#1e3a5f','#7c2d3c']],['Muse Serif','elegante','Refinado e artístico','elegante',['#9f1239','#6b2d5c','#7c2d3c']],['Noir Elegante','elegante','Escuro e sofisticado','elegante',['#262626','#2b2b2b','#1a2b4a']],['Brisa Clean','minimal','Fresco e funcional','minimal',['#0284c7','#0e7490','#1e3a5f']],['Mono Focus','minimal','Direto ao ponto','minimal',['#171717','#2b2b2b','#374151']],['Cor de Fundo','criativo','Expressivo e visual','criativo',['#7e22ce','#6b2d5c','#be185d']],['Laranja Ativo','criativo','Energia e ação','criativo',['#ea580c','#a0522d','#d97706']],['Dev Stack','tech','Portfólio técnico','tech',['#4f46e5','#0e7490','#6b2d5c']],['Open Source','tech','Comunidade e código','tech',['#15803d','#556b2f','#0e7490']],['Office Prime','corporativo','Executivo e limpo','corporativo',['#475569','#1a2b4a','#2b2b2b']],['Corporate Light','corporativo','Institucional e claro','corporativo',['#0369a1','#1e3a5f','#0f766e']],['Side Note','sidebar','Visual e organizado','sidebar',['#9333ea','#6b2d5c','#3d4f7d']],['Side Balance','sidebar','Equilíbrio e clareza','sidebar',['#ca8a04','#556b2f','#a0522d']],['Jornada','timeline','História profissional','timeline',['#ea580c','#a0522d','#7c2d3c']],['Trilha Verde','timeline','Crescimento contínuo','timeline',['#16a34a','#365314','#0f766e']],['Compact Flow','compacto','Fluxo e síntese','compacto',['#0891b2','#0e7490','#1e3a5f']],['Duas Colunas Pro','compacto','Densidade profissional','compacto',['#be123c','#7c2d3c','#6b2d5c']],['Card Moderno','cartao','Perfil contemporâneo','cartao',['#0d9488','#0f766e','#3d4f7d']],['Card Monograma','cartao','Presença e personalidade','cartao',['#be185d','#7c2d3c','#6b2d5c']],['Executive Navy','executivo','Autoridade e confiança','executivo',['#172554','#1e3a5f','#1a2b4a']],['Executive Olive','executivo','Clássico natural','executivo',['#3f6212','#556b2f','#365314']],['Editorial Rose','elegante','Delicado e marcante','elegante',['#be123c','#7c2d3c','#6b2d5c']],['Editorial Stone','elegante','Neutro e sofisticado','elegante',['#57534e','#2b2b2b','#44403c']],['White Space','minimal','Respiro e foco','minimal',['#64748b','#1e3a5f','#2b2b2b']],['Mono Resume','minimal','Monocromático e forte','minimal',['#111827','#2b2b2b','#374151']],['Pop Criativo','criativo','Jovem e vibrante','criativo',['#db2777','#be185d','#7c3aed']],['Blue Canvas','criativo','Cor e confiança','criativo',['#2563eb','#1e3a5f','#0e7490']],['Code Green','tech','Tecnologia sustentável','tech',['#22c55e','#16a34a','#0f766e']],['Code Purple','tech','Digital e ousado','tech',['#8b5cf6','#6b2d5c','#7c3aed']],['Timeline Ink','timeline','Sóbrio e progressivo','timeline',['#334155','#1e3a5f','#2b2b2b']],['Timeline Coral','timeline','Acolhedor e direto','timeline',['#f97316','#a0522d','#be123c']]
+].map(([name,structure,desc,category,colors], index)=>({id:'extra-'+(index+1),name,structure,desc,category,colors,accent:0,layoutOpts:[{key:'showPhoto',label:'Mostrar foto',default:true}]}));
+templates.push(...extraTemplates);
+const categoryByStructure = {minimal:'minimal',executivo:'executivo',criativo:'criativo',tech:'tech',sidebar:'sidebar',timeline:'timeline',compacto:'compacto',cartao:'cartao',elegante:'elegante',corporativo:'corporativo'};
+templates.forEach(t=>{ if(!t.category) t.category = categoryByStructure[t.structure] || 'minimal'; });
+let galleryQuery = '';
+let galleryCategory = 'Todos';
+
 try { const saved = localStorage.getItem(SAVED_DATA_KEY); if (saved) data = {...data, ...JSON.parse(saved)}; } catch (e) {}
 let currentTemplate = null;
 let currentOptions = {};
@@ -541,18 +551,33 @@ function thumbSVG(t){
 
 function renderGallery(){
   const grid = document.getElementById('galleryGrid');
-  grid.innerHTML = templates.map(t=>{
+  const filtered = templates.filter(t=>{
+    const matchesCategory = galleryCategory === 'Todos' || (t.category || 'Clássicos') === galleryCategory;
+    const haystack = `${t.name} ${t.desc} ${t.category || ''}`.toLowerCase();
+    return matchesCategory && haystack.includes(galleryQuery.toLowerCase());
+  });
+  const count = document.getElementById('modelCount');
+  if(count) count.textContent = `${filtered.length} ${filtered.length === 1 ? 'modelo encontrado' : 'modelos encontrados'}`;
+  grid.innerHTML = filtered.map(t=>{
     if(t.blank){
       return `<div class="card blank" onclick="chooseTemplate('${t.id}')">
         <div class="thumb"><span class="plus">+</span></div>
         <div class="card-name"><b>Começar do zero</b><span>Página em branco, edite tudo</span></div>
       </div>`;
     }
-    return `<div class="card" onclick="chooseTemplate('${t.id}')">
+    return `<div class="card" data-category="${t.category || 'Clássicos'}" onclick="chooseTemplate('${t.id}')">
       <div class="thumb" style="background:#fafaf8;">${thumbSVG(t)}</div>
       <div class="card-name"><b>${t.name}</b><span>${t.desc}</span></div>
     </div>`;
   }).join('');
+}
+
+function filterGallery(query){ galleryQuery = query; renderGallery(); }
+function setGalleryCategory(category, button){
+  galleryCategory = category;
+  document.querySelectorAll('.filter-chip').forEach(chip=>chip.classList.remove('active'));
+  if(button) button.classList.add('active');
+  renderGallery();
 }
 
 function chooseTemplate(id){

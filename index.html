@@ -36,14 +36,31 @@
         <span class="saas-note">100% gratuito · seus dados ficam no seu navegador</span>
       </div>
     </div>
-    <div class="saas-proof"><strong>11 modelos</strong><span>Escolha o visual que combina com sua área, personalize cada detalhe e baixe seu currículo em PDF.</span></div>
+    <div class="saas-proof"><strong>61 modelos</strong><span>Escolha o visual que combina com sua área, personalize cada detalhe e baixe seu currículo em PDF.</span></div>
   </section>
   <div class="saas-features">
     <span class="saas-feature">✓ Sem cadastro</span><span class="saas-feature">✓ Exportação em PDF</span><span class="saas-feature">✓ Editável no celular</span><span class="saas-feature">✓ Seus dados são seus</span>
   </div>
   <div class="gallery-wrap" id="models">
     <div class="gallery-head">
-      <div><span class="gallery-label">Comece agora</span><h1>Escolha um modelo</h1><h2>Escolha um modelo e comece a editar</h2><p>Preencha seus dados, ajuste o estilo e baixe um currículo profissional pronto para compartilhar.</p></div>
+      <div><span class="gallery-label">Comece agora</span><h1>Escolha um modelo</h1><h2>Escolha um modelo e comece a editar</h2><p>Explore 61 estilos, filtre por personalidade e encontre um currículo que tenha a sua cara.</p></div>
+    </div>
+    <div class="gallery-tools">
+      <label class="search-box"><span>⌕</span><input type="search" placeholder="Buscar por estilo ou nome..." oninput="filterGallery(this.value)"></label>
+      <span class="model-count" id="modelCount">61 modelos encontrados</span>
+    </div>
+    <div class="filter-row">
+      <button class="filter-chip active" onclick="setGalleryCategory('Todos',this)">Todos</button>
+      <button class="filter-chip" onclick="setGalleryCategory('minimal',this)">Minimalistas</button>
+      <button class="filter-chip" onclick="setGalleryCategory('executivo',this)">Executivos</button>
+      <button class="filter-chip" onclick="setGalleryCategory('criativo',this)">Criativos</button>
+      <button class="filter-chip" onclick="setGalleryCategory('tech',this)">Tech</button>
+      <button class="filter-chip" onclick="setGalleryCategory('sidebar',this)">Sidebar</button>
+      <button class="filter-chip" onclick="setGalleryCategory('timeline',this)">Timeline</button>
+      <button class="filter-chip" onclick="setGalleryCategory('compacto',this)">Compactos</button>
+      <button class="filter-chip" onclick="setGalleryCategory('cartao',this)">Perfil</button>
+      <button class="filter-chip" onclick="setGalleryCategory('elegante',this)">Elegantes</button>
+      <button class="filter-chip" onclick="setGalleryCategory('corporativo',this)">Corporativos</button>
     </div>
     <div class="grid" id="galleryGrid"></div>
   </div>
