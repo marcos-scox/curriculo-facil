@@ -267,9 +267,9 @@ function renderPanel(){
   // foto
   html += `<div class="panel-section">
     <h3>Foto (opcional)</h3>
-    <div class="photo-upload">
+    <div class="photo-upload photo-dropzone" onclick="document.getElementById('photoFile').click()" ondragover="event.preventDefault();this.classList.add('dragging')" ondragleave="this.classList.remove('dragging')" ondrop="event.preventDefault();this.classList.remove('dragging');handlePhotoFile(event.dataTransfer.files[0])">
       <img class="photo-preview" id="photoPreview" src="${data.photo || 'https://placehold.co/88x88/eee/999?text=%20'}">
-      <label class="btn">Enviar foto<input type="file" accept="image/*" style="display:none" onchange="uploadPhoto(event)"></label>
+      <div><button type="button" class="btn" onclick="event.stopPropagation();document.getElementById('photoFile').click()">Selecionar foto</button><input id="photoFile" type="file" accept="image/*" capture="environment" onchange="uploadPhoto(event)"><div class="small-note">Toque para escolher ou arraste uma imagem</div></div>
     </div>
     <div class="small-note">A foto será recortada em formato quadrado para não esticar no currículo.</div>
   </div>`;
@@ -370,8 +370,12 @@ function setTextColor(key,val){ currentOptions[key]=val; renderPreview(); }
 function setOption(key,val){ currentOptions[key]=val; renderPreview(); }
 function setFont(value){ currentOptions.fontFamily=value; renderPreview(); }
 function uploadPhoto(e){
-  const file = e.target.files[0];
+  const file = e.target.files && e.target.files[0];
+  handlePhotoFile(file);
+}
+function handlePhotoFile(file){
   if(!file) return;
+  if(!file.type || !file.type.startsWith('image/')){ alert('Selecione um arquivo de imagem.'); return; }
   const reader = new FileReader();
   reader.onload = ()=> openCropper(reader.result);
   reader.readAsDataURL(file);
