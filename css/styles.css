@@ -148,6 +148,9 @@ input,textarea{font-family:inherit;}
 .photo-preview{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);object-fit:cover;border:1px solid var(--sys-border);}
 .photo-upload label.btn{padding:7px 12px;font-size:12.5px;}
 .small-note{font-size:11.5px;color:var(--sys-low);margin-top:4px;}
+.data-actions{padding-bottom:90px;}
+.clear-data-btn{width:100%;margin-top:12px;padding:10px 12px;border:1px solid rgba(224,138,138,.45);border-radius:8px;background:rgba(224,138,138,.08);color:#e8a2a2;font-size:12.5px;font-weight:700;cursor:pointer;}
+.clear-data-btn:hover{border-color:#e8a2a2;background:rgba(224,138,138,.16);}
 
 /* ---------- recorte de foto ---------- */
 .crop-modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(3,5,12,.78);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:20px;}

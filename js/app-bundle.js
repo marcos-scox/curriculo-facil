@@ -437,6 +437,7 @@ let data = {
   skills:'Comunicação, Organização, Excel',
   languages:'Português (nativo), Inglês (avançado)'
 };
+const DEFAULT_DATA = JSON.parse(JSON.stringify(data));
 let expCounter=1, eduCounter=1;
 
 /* ============================================================
@@ -747,6 +748,11 @@ function renderPanel(){
     <div class="field"><textarea oninput="upd('languages',this.value)">${esc(data.languages)}</textarea></div>
     <div class="small-note">Separe por vírgula.</div>
   </div>`;
+  html += `<div class="panel-section data-actions">
+    <h3>Dados neste dispositivo</h3>
+    <p class="small-note">Seu rascunho fica salvo apenas neste navegador.</p>
+    <button class="clear-data-btn" onclick="clearSavedData()">Limpar dados salvos</button>
+  </div>`;
 
   p.innerHTML = html;
 }
@@ -754,6 +760,13 @@ function renderPanel(){
 function esc(s){ return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function persistData(){ try { localStorage.setItem(SAVED_DATA_KEY, JSON.stringify(data)); } catch (e) {} }
+function clearSavedData(){
+  if(!confirm('Limpar todos os dados salvos deste currículo? Essa ação não pode ser desfeita.')) return;
+  try { localStorage.removeItem(SAVED_DATA_KEY); } catch (e) {}
+  data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  expCounter = 1; eduCounter = 1;
+  renderPanel(); renderPreview();
+}
 function upd(field,val){ data[field]=val; persistData(); renderPreview(); }
 function updItem(list,id,field,val){
   const item = data[list].find(x=>x.id===id);
